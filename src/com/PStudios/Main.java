@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class Main {
 
-    File f = new File("");
+    File f;
 
     public static void main(String[] args) throws IOException {
         AnalizadorLexico l = new AnalizadorLexico();
