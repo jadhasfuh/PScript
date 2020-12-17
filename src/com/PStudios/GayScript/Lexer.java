@@ -16,8 +16,8 @@ public class Lexer {
     int nlinea = 0;
     int lene = 1;
     String[] lineas;
-    ArrayList<String> toke = new ArrayList<String>();
-    ArrayList<String> lexe = new ArrayList<String>();
+    ArrayList<String> toke = new ArrayList<String>();   //TOKEN NAMES
+    ArrayList<String> lexe = new ArrayList<String>();   //ORIGINAL SYMBOLS
 
     public Lexer(String filePath) {
         filePath = filePath.trim(); //quitamos espacios
