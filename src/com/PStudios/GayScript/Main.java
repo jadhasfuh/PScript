@@ -45,12 +45,12 @@ public class Main {
     public void inicio (String cad) {
         Lexer lexer = new Lexer(cad);                  //incicia lexico
         String error= "";
-        System.out.println("Análisis Léxico");
-        System.out.println(lexer.toke);
-        System.out.println(lexer.lexe);
-        error = lexer.getMensajeError();
-        System.out.println(error);
-        System.out.println("Análisis Sintáctico");
+        //System.out.println("Análisis Léxico");
+        //System.out.println(lexer.toke);
+        //System.out.println(lexer.lexe);
+        //error = lexer.getMensajeError();
+        //System.out.println(error);
+        //System.out.println("Análisis Sintáctico");
         Parser parser = new Parser(lexer.toke,lexer.lexe);
 
     }
