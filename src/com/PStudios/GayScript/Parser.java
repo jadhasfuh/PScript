@@ -14,12 +14,13 @@ public class Parser {
     Stack<String> pila = new Stack<String>();
     String [][] table_funciones = t.laperrona2;
     String [][] table_produccin = t.lautil;
+    boolean continuar = true;
 
     public Parser(ArrayList<String> t, ArrayList<String> l){
         toke = t;
         lexe = l;
         num_toke = t.size();
-        lexe.add("$");          //WE NEED TO ADD AN END OF STRING SYMBOL
+        toke.add("$");          //WE NEED TO ADD AN END OF STRING SYMBOL
         proceso();
     }
 
@@ -42,9 +43,10 @@ public class Parser {
     public void proceso(){
         int C = 0;                          //COLUMNA (TOKEN)
         pila.push("I0");               //INSERTA EL ESTADO INICIAL
-        while (!toke.get(0).equals("$")) {  //MIENTRAS HAYA TOKENS
+        while (continuar) {  //MIENTRAS HAYA TOKENS
             next(C);
         }
+        System.out.println("Sintaxic correcta");
     }
 
     public void desplaza(int C){
@@ -56,24 +58,22 @@ public class Parser {
     }
 
     public void reduce(int C) {
-        int NP = Integer.parseInt(table_funciones[estado_actual+1][C].substring(1,(table_funciones[estado_actual+1][C].length())));
-        String produccion[] = (table_produccin[NP][2]).split(" ");
-        System.out.println(produccion[0]);
-        int prodindex = produccion.length-1;
-        while (prodindex >= 0) {
-            if (pila.peek().charAt(0) == 'I') estado_actual = Integer.parseInt(pila.peek().substring(1,2));
-            if (produccion[prodindex].equals(pila.peek())){
-                pila.pop();
-                prodindex--;
+        int NP = Integer.parseInt(table_funciones[estado_actual+1][C].substring(1,(table_funciones[estado_actual+1][C].length()))); //NUM PRODUCCION A REDUCIR
+        if(NP == 0) continuar = false;
+        String produccion[] = (table_produccin[NP][2]).split(" "); //DIVIDE STRING EN ARREGLO EJEM: P'-> [P]
+        int prodindex = produccion.length-1;        //CUANTOS ELEMENTOS TIENE EL ARREGLO RESULTANTE
+        while (prodindex >= 0) {                    //COMPARA DEL FINAL AL INICIO
+            if (pila.peek().charAt(0) == 'I') estado_actual = Integer.parseInt(pila.peek().substring(1,2)); //OBTINE ESTADOS
+            if (produccion[prodindex].equals(pila.peek())){  //SI COINCIDE CONTINUA COMPARANDO CON EL SIGUIENTE
+                pila.pop();                                  //QUITANDO DE LA PILA
+                prodindex--;                                 //Y CONTINUANDO IGUAL DEL NUEVO FINAL AL INICIO
             }else{
-                pila.pop();
+                pila.pop();                                     //SI NO, IGUAL QUITA :V
             }
-            System.out.println(pila);
         }
         if (prodindex < 0){
-            estado_actual = Integer.parseInt(pila.peek().substring(1,2));
-            System.out.println(estado_actual);
-            pila.push(table_produccin[NP][1]);
+            estado_actual = Integer.parseInt(pila.peek().substring(1,pila.peek().length())); //TOMA EL ULTIMO ESTADO PARA GENERAR EL NUEVO ESTADO
+            pila.push(table_produccin[NP][1]);                              //DA PUSH A LO QUE GENERA LA REDUCCION
             int P = 0;
             for (int i = 0; i < table_funciones[0].length; i++) { //C R
                 if (table_funciones[0][i].equals(pila.peek())) {    //ENCUENTRA LA POSICION DEL TOKEN
