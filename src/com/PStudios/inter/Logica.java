@@ -2,7 +2,6 @@ package com.PStudios.inter;
 
 import com.PStudios.analizadorlexico.Token;
 import com.PStudios.simbolos.Tipo;
-import com.sun.javafx.binding.StringFormatter;
 
 public class Logica extends Expr {
     public Expr expr1, expr2;
