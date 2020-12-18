@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Main {
 
-    static String cadena1 = "int @x,@y;\n@x=@y;"; //esta cadena utilizaremos mi pana
+    static String cadena1 = "int @xf,@y;\n@x=@y;"; //esta cadena utilizaremos mi pana
 
     private String[][] tablaToken =
             {
@@ -45,12 +45,12 @@ public class Main {
     public void inicio (String cad) {
         Lexer lexer = new Lexer(cad);                  //incicia lexico
         String error= "";
-        //System.out.println("Análisis Léxico");
-        //System.out.println(lexer.toke);
-        //System.out.println(lexer.lexe);
-        //error = lexer.getMensajeError();
-        //System.out.println(error);
-        //System.out.println("Análisis Sintáctico");
+        System.out.println("Análisis Léxico");
+        System.out.println(lexer.toke);
+        System.out.println(lexer.lexe);
+        error = lexer.getMensajeError();
+        System.out.println(error);
+        System.out.println("\n\nAnálisis Sintáctico");
         Parser parser = new Parser(lexer.toke,lexer.lexe);
 
     }

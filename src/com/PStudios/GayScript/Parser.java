@@ -10,6 +10,7 @@ public class Parser {
     ArrayList<String> toke;
     ArrayList<String> lexe;
     Tablas t = new Tablas();
+    int nlinea = 1;
     int estado_actual = 0, num_toke = 0;
     Stack<String> pila = new Stack<String>();
     String [][] table_funciones = t.laperrona2;
@@ -44,6 +45,10 @@ public class Parser {
         int C = 0;                          //COLUMNA (TOKEN)
         pila.push("I0");               //INSERTA EL ESTADO INICIAL
         while (continuar) {  //MIENTRAS HAYA TOKENS
+            if(toke.get(0).equals("linea")){
+                toke.remove(0);
+                nlinea++;
+            }
             next(C);
         }
         System.out.println("Sintaxic correcta");

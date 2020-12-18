@@ -26,7 +26,10 @@ public class Lexer {
         nlinea = lineas.length;
         for (int i = 0; i < nlinea; i++) ignoraEspacios(i);
         filePath = "";
-        for (int i = 0; i < lineas.length; i++) findNextToken(lineas[i]);
+        for (int i = 0; i < lineas.length; i++){
+            findNextToken(lineas[i], i);
+            toke.add("linea");
+        }
     }
 
     private void ignoraEspacios(int n) {
@@ -35,7 +38,7 @@ public class Lexer {
         for (int i = 0; i < temp.length; i++) lineas[n] = lineas[n] + temp[i];
     }
 
-    private void findNextToken(String filepath) {
+    private void findNextToken(String filepath, int linea) {
         while (!filepath.isEmpty() && mensajeError.isEmpty()){
             for (Tokens t : Tokens.values()) {
                 int end = t.endOfMatch(filepath);
@@ -47,7 +50,7 @@ public class Lexer {
                         lexe.add(lexema);
                         filepath = filepath.substring(end, filepath.length());
                     }else {
-                        mensajeError += "\nError léxico en la linea " + nlinea;
+                        mensajeError += "\nError léxico en la linea " + (linea+1);
                     }
                     break;
                 }
