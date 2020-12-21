@@ -1,7 +1,5 @@
 package com.PStudios.GayScript;
 
-import com.PStudios.analizadorlexico.Token;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;

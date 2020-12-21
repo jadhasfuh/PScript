@@ -1,10 +1,12 @@
 package com.PStudios.GayScript;
 
-import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Main {
 
-    static String cadena1 = "int @xf,@y;\n@x=@y;"; //esta cadena utilizaremos mi pana
+    static String cadena1 = "int @xf,@y;\n @x=@y;"; //esta cadena utilizaremos mi pana
+    String tokens = "Analisis Lexico\n";
+    Scanner po = new Scanner(System.in);
 
     private String[][] tablaToken =
             {
@@ -43,16 +45,27 @@ public class Main {
     }
 
     public void inicio (String cad) {
-        Lexer lexer = new Lexer(cad);                  //incicia lexico
-        String error= "";
-        System.out.println("Análisis Léxico");
-        System.out.println(lexer.toke);
-        System.out.println(lexer.lexe);
+        Lexer lexer = new Lexer(cad);
+        tokens += lexer.toke;
+        String error = "";
         error = lexer.getMensajeError();
-        System.out.println(error);
-        System.out.println("\n\nAnálisis Sintáctico");
-        Parser parser = new Parser(lexer.toke,lexer.lexe);
-
+        Parser parser = new Parser(lexer.toke, lexer.lexe);
+        int op = 0;
+        while (op != 3){
+            System.out.println("Fin de proceso. \n1)Ver Analisis Lexico\n2)Ver Analisis Sintactico\n3)Salir");
+            op = po.nextInt();
+            switch (op){
+                case 1:
+                    System.out.println(tokens);
+                    System.out.println(lexer.lexe);
+                    System.out.println(error);
+                    break;
+                case 2:
+                    System.out.println(parser.getLog());
+                    System.out.println(parser.getMensajeError());
+                    break;
+            }
+        }
     }
     public void buscatoken (String param) {
         //buscamos el parametro de cada lexema y lo llenamos con sus caracteristicas

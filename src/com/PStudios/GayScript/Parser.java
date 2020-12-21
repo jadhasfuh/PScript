@@ -1,8 +1,6 @@
 package com.PStudios.GayScript;
 
-import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Stack;
 
 public class Parser {
@@ -10,12 +8,15 @@ public class Parser {
     ArrayList<String> toke;
     ArrayList<String> lexe;
     Tablas t = new Tablas();
-    int nlinea = 1;
+    int nlinea = 0;
     int estado_actual = 0, num_toke = 0;
     Stack<String> pila = new Stack<String>();
     String [][] table_funciones = t.laperrona2;
     String [][] table_produccin = t.lautil;
+    String mensajeError = "";
+    String showLog = "Analisis Sintactico\n";
     boolean continuar = true;
+    boolean error = false;
 
     public Parser(ArrayList<String> t, ArrayList<String> l){
         toke = t;
@@ -31,12 +32,14 @@ public class Parser {
                 C = i;
             }
         }
-        if (table_funciones[estado_actual+1][C].charAt(0) == 'P'){
-            System.out.println("Reduce "+table_funciones[estado_actual+1][C]+" ");
+        if (table_funciones[estado_actual+1][C].charAt(0) == ' '){
+            continuar = false;
+            error = true;
+        }else if (table_funciones[estado_actual+1][C].charAt(0) == 'P'){
+            showLog += "Reduce "+table_funciones[estado_actual+1][C]+"\n";
             reduce(C);                                                                  //PRODUCCION O DESPLAZAMIENTO
-        }
-        else{
-            System.out.println("Desplaza "+toke.get(0)+" con estado I"+estado_actual);
+        }else{
+            showLog += "Desplaza "+toke.get(0)+" con estado I"+estado_actual+"\n";
             desplaza(C);                                                                //DEACUERDO A LO ENCONTRADO
         }
     }
@@ -51,13 +54,14 @@ public class Parser {
             }
             next(C);
         }
-        System.out.println("Sintaxic correcta");
+        if (error) mensajeError += "Error de sintaxis en la línea: "+nlinea;
+        else showLog += "Sintaxis correcta\n";
     }
 
     public void desplaza(int C){
         pila.push(toke.get(0));                                                 //INSERTA TOKEN
         pila.push("I"+table_funciones[estado_actual+1][C]);                  //INSERTA EL ESTADO
-        System.out.println(pila);
+        showLog += pila+"\n";
         estado_actual = Integer.parseInt(table_funciones[estado_actual+1][C]);    //NUEVO ESTADO
         toke.remove(0);                                                    //ELIMINA EL TOKEN DE LA ENTRADA
     }
@@ -87,7 +91,13 @@ public class Parser {
             }
             estado_actual = Integer.parseInt(table_funciones[estado_actual+1][P]);
             pila.push("I"+estado_actual);                  //INSERTA EL ESTADO
-            System.out.println(pila);
+            showLog += pila+"\n";
         }
+    }
+    public String getMensajeError(){
+        return mensajeError;
+    }
+    public String getLog(){
+        return showLog;
     }
 }
