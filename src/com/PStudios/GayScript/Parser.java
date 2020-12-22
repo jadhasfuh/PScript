@@ -8,7 +8,7 @@ public class Parser {
     ArrayList<String> toke;
     ArrayList<String> lexe;
     Tablas t = new Tablas();
-    int nlinea = 0;
+    int nlinea = 1;
     int estado_actual = 0, num_toke = 0;
     Stack<String> pila = new Stack<String>();
     String [][] table_funciones = t.laperrona2;
@@ -17,11 +17,12 @@ public class Parser {
     String showLog = "Analisis Sintactico\n";
     boolean continuar = true;
     boolean error = false;
+    TablaSimbolos tablaSimbolos;
 
-    public Parser(ArrayList<String> t, ArrayList<String> l){
+    public Parser(ArrayList<String> t, ArrayList<String> l, TablaSimbolos tabla){
         toke = t;
         lexe = l;
-        num_toke = t.size();
+        tablaSimbolos = tabla;
         toke.add("$");          //WE NEED TO ADD AN END OF STRING SYMBOL
         proceso();
     }

@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Main {
 
-    static String cadena1 = "int @xf,@y;\n @x=@y;"; //esta cadena utilizaremos mi pana
+    static String cadena1 = "int @x, @y;\n @x=@y;"; //esta cadena utilizaremos mi pana
     String tokens = "Analisis Lexico\n";
     Scanner po = new Scanner(System.in);
 
@@ -45,11 +45,13 @@ public class Main {
     }
 
     public void inicio (String cad) {
-        Lexer lexer = new Lexer(cad);
+        TablaSimbolos tabla = new TablaSimbolos();
+        Lexer lexer = new Lexer(cad,tabla);
         tokens += lexer.toke;
         String error = "";
         error = lexer.getMensajeError();
-        Parser parser = new Parser(lexer.toke, lexer.lexe);
+        Parser parser = new Parser(lexer.toke, lexer.lexe, tabla);
+        tabla.imprimir();
         int op = 0;
         while (op != 3){
             System.out.println("Fin de proceso. \n1)Ver Analisis Lexico\n2)Ver Analisis Sintactico\n3)Salir");
