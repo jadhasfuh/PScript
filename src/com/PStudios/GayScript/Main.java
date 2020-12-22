@@ -51,7 +51,6 @@ public class Main {
         String error = "";
         error = lexer.getMensajeError();
         Parser parser = new Parser(lexer.toke, lexer.lexe, tabla);
-        tabla.imprimir();
         int op = 0;
         while (op != 3){
             System.out.println("Fin de proceso. \n1)Ver Analisis Lexico\n2)Ver Analisis Sintactico\n3)Salir");
@@ -68,6 +67,7 @@ public class Main {
                     break;
             }
         }
+        tabla.imprimir();
     }
     public void buscatoken (String param) {
         //buscamos el parametro de cada lexema y lo llenamos con sus caracteristicas

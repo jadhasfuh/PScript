@@ -17,6 +17,7 @@ public class Parser {
     String showLog = "Analisis Sintactico\n";
     boolean continuar = true;
     boolean error = false;
+    int pos = 0;
     TablaSimbolos tablaSimbolos;
 
     public Parser(ArrayList<String> t, ArrayList<String> l, TablaSimbolos tabla){
@@ -40,6 +41,11 @@ public class Parser {
             showLog += "Reduce "+table_funciones[estado_actual+1][C]+"\n";
             reduce(C);                                                                  //PRODUCCION O DESPLAZAMIENTO
         }else{
+            if (estado_actual == 9){
+                Simbolo ant = (Simbolo)tablaSimbolos.buscar(lexe.get(pos));   //BUSCA EL VALOR CON EL LEXEMA EN LA TABLA
+                Simbolo nue = (Simbolo)tablaSimbolos.buscar(lexe.get(pos-2));   //OBTIENE EL VALOR DEL TOKEN ANTES DEL SIGNO
+                tablaSimbolos.reemp(nue.pos,nue.nombre,nue.tipo,ant.nombre);    //LE ASIGNA VALOR AL VALOR ANTES DEL SIGNO
+            }
             showLog += "Desplaza "+toke.get(0)+" con estado I"+estado_actual+"\n";
             desplaza(C);                                                                //DEACUERDO A LO ENCONTRADO
         }
@@ -64,6 +70,7 @@ public class Parser {
         pila.push("I"+table_funciones[estado_actual+1][C]);                  //INSERTA EL ESTADO
         showLog += pila+"\n";
         estado_actual = Integer.parseInt(table_funciones[estado_actual+1][C]);    //NUEVO ESTADO
+        pos ++;     //EL NUMERO DE TOKEN QUE ENTRO
         toke.remove(0);                                                    //ELIMINA EL TOKEN DE LA ENTRADA
     }
 

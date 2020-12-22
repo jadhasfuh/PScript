@@ -58,14 +58,13 @@ public class Lexer {
                     if ((currentToken()+"").equals("entero")) tipo = "entero";
                     else if ((currentToken()+"").equals("flotante")) tipo = "flotante";
                     else if ((currentToken()+"").equals("caracter")) tipo = "caracter";
-                    else if (!(currentToken()+"").equals("identificador")) tipo = "";
+                    else if (!(currentToken()+"").equals("identificador") && !(currentToken()+"").equals("comma")) tipo = "";
                     if ((currentToken()+"").equals("identificador")) {
-                        if (tablaSimbolos.buscar(pos) == null)
-                            tablaSimbolos.insertar(pos, lexema, tipo,"");
+                        if (tablaSimbolos.buscar(lexema) == null)
+                            tablaSimbolos.insertar(pos+"", lexema, tipo,"");
                     }else{
-                        if (tablaSimbolos.buscar(pos) == null)
-                            tablaSimbolos.insertar(pos, lexema, lexema,"");
-                        System.out.println(tablaSimbolos.buscar(pos));
+                        if (tablaSimbolos.buscar(lexema) == null)
+                            tablaSimbolos.insertar(pos+"", lexema, lexema,"");
                     }
 
                     break;
