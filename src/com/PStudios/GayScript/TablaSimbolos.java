@@ -1,6 +1,7 @@
 package com.PStudios.GayScript;
 
 import java.util.HashMap;
+
 public class TablaSimbolos {
 
     HashMap <String, Simbolo> t;
@@ -26,7 +27,8 @@ public class TablaSimbolos {
     public void imprimir(){
         for (String nom: t.keySet()){
             Simbolo s = (Simbolo)t.get(nom);
-            System.out.println(s.pos+"\t\t-->\t"+s.nombre + "\t\t-->\t"+s.tipo+ "\t\t-->\t"+ s.valor);
+            System.out.println(s.pos+"\t-->\t"+s.nombre + "\t\t-->\t"+s.tipo+ "\t\t-->\t"+ s.valor);
         }
     }
+
 }

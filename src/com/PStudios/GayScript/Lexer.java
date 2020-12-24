@@ -60,9 +60,12 @@ public class Lexer {
                     else if ((currentToken()+"").equals("caracter")) tipo = "caracter";
                     else if (!(currentToken()+"").equals("identificador") && !(currentToken()+"").equals("comma")) tipo = "";
                     if ((currentToken()+"").equals("identificador")) {
-                        if (tablaSimbolos.buscar(lexema) == null)
-                            tablaSimbolos.insertar(pos+"", lexema, tipo,"");
-                    }else{
+                        if (tablaSimbolos.buscar(lexema) == null) {
+                            if (tipo.equals(""))//SIN NADA, ERROR
+                                tablaSimbolos.insertar(pos+"", lexema, "error","");
+                            else
+                                tablaSimbolos.insertar(pos+"", lexema, tipo,"");
+                        }}else{
                         if (tablaSimbolos.buscar(lexema) == null)
                             tablaSimbolos.insertar(pos+"", lexema, lexema,"");
                     }

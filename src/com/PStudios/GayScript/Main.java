@@ -4,16 +4,18 @@ import java.util.Scanner;
 
 public class Main {
 
-    static String cadena1 = "int @x, @y;\n @x=@y;"; //esta cadena utilizaremos mi pana
+    //static String cadena1 = "int @x, @y;\n @x=@y;"; //esta cadena utilizaremos mi pana
+    static String cadena1 = "int @x,@z; float @y,@w,@zapo; \n@A = @x+@y-@z*@w;"; //esta cadena utilizaremos mi pana
+
     String tokens = "Analisis Lexico\n";
     Scanner po = new Scanner(System.in);
 
     private String[][] tablaToken =
             {
-                {"identificador",   "1"},
-                {"id_ent",          "2"},
-                {"id_dec",          "3"},
-                {"id_cart",         "4"}
+                    {"identificador",   "1"},
+                    {"id_ent",          "2"},
+                    {"id_dec",          "3"},
+                    {"id_cart",         "4"}
             };  //clasificacion, atributo
 
     private String[][] tablaSimbolos =
@@ -31,11 +33,11 @@ public class Main {
 
     private String[][] tablaReservadas=
             {
-                {"if",      "si",       "14"},
-                {"while",   "mientras", "15"},
-                {"float",   "flotante", "16"},
-                {"int",     "entero","  17"},
-                {"char",    "caracter", "18"},
+                    {"if",      "si",       "14"},
+                    {"while",   "mientras", "15"},
+                    {"float",   "flotante", "16"},
+                    {"int",     "entero","  17"},
+                    {"char",    "caracter", "18"},
             };//Lexema, clasificacion, atributo
 
     public static void main(String[] args) {
@@ -52,8 +54,8 @@ public class Main {
         error = lexer.getMensajeError();
         Parser parser = new Parser(lexer.toke, lexer.lexe, tabla);
         int op = 0;
-        while (op != 3){
-            System.out.println("Fin de proceso. \n1)Ver Analisis Lexico\n2)Ver Analisis Sintactico\n3)Salir");
+        while (op != 5){
+            System.out.println("Fin de proceso. \n1)Ver Analisis Lexico\n2)Ver Analisis Sintactico \n3)Tabla de jerarquia \n4)Tabla semantica\n5)Salir");
             op = po.nextInt();
             switch (op){
                 case 1:
@@ -65,9 +67,14 @@ public class Main {
                     System.out.println(parser.getLog());
                     System.out.println(parser.getMensajeError());
                     break;
+                case 3:
+                    tabla.imprimir();
+                    break;
+                case 4:
+                    System.out.println(parser.getSema());
+                    break;
             }
         }
-        tabla.imprimir();
     }
     public void buscatoken (String param) {
         //buscamos el parametro de cada lexema y lo llenamos con sus caracteristicas
