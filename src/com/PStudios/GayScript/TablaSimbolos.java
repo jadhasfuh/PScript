@@ -1,7 +1,6 @@
 package com.PStudios.GayScript;
 
 import java.util.HashMap;
-
 public class TablaSimbolos {
 
     HashMap <String, Simbolo> t;

@@ -4,19 +4,19 @@ import java.util.Scanner;
 
 public class Main {
 
-    //static String cadena1 = "int @x, @y;\n @x=@y;"; //esta cadena utilizaremos mi pana
-    static String cadena1 = "int @x,@z; float @y,@w,@zapo; \n@A = @x+@y-@z*@w;"; //esta cadena utilizaremos mi pana
-    //static String cadena1 = "int @x,@z; float @y,@w,@A; \n@A = (@x+@y)-@z*@w;"; //esta cadena utilizaremos mi pana
-    //static String cadena1 = "int @x,@z; float @y,@w,@A; \n@A = @x+@y-(@z*@w);"; //esta cadena utilizaremos mi pana
-    //static String cadena1 = "int @x,@z; float @y,@w,@A; \n@A = @x+@y-(@z*@w;"; //esta cadena utilizaremos mi pana
+    static String cadena1 = "int @x, @y;\n @x=@y;";                                             //ESTE ES LA CADENA A ANALIZAR
+    //static String cadena1 = "int @x,@z; float @y,@w,@zapo; \n@A = @x+@y-@z*@w;";              //ESTOS SON MAS EJEMPLOS
+    //static String cadena1 = "int @x,@z; float @y,@w,@A; \n@A = (@x+@y)-@z*@w;";
+    //static String cadena1 = "int @x,@z; float @y,@w,@A; \n@A = @x+@y-@z*@w;";
+    //static String cadena1 = "int @x,@z; float @y,@w,@A; \n@A = @x+@y-(@z*@w);";
 
     String tokens = "Analisis Lexico\n";
     Scanner po = new Scanner(System.in);
 
     public static void main(String[] args) {
         Main LPS = new Main();
-        LPS.inicio(cadena1);                                                            // AQUI METEMOS EL PROGRAMA EN ORIGEN
-    }
+        LPS.inicio(cadena1);                                                                    //CADENA DESDE INICIO PARA SU FUTURO
+    }                                                                                           //ACOPLE A EDITOR DE TEXTO
 
     public void inicio (String cad) {
         TablaSimbolos tabla = new TablaSimbolos();

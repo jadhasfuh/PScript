@@ -4,7 +4,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum Tokens {
-
     identificador("@[_]?[A-Z|a-z|0-9]+"),
     entero("int"),
     flotante("float"),
@@ -24,16 +23,13 @@ public enum Tokens {
     error("[[\\w-]|[@#^-_?~`\\|]|[:.{}']|[\"]|[\\s]]");
 
     private final Pattern pattern;
-
     Tokens(String regex) {
         pattern = Pattern.compile("^" + regex);
     }
 
     int endOfMatch(String s) {
         Matcher m = pattern.matcher(s);
-        if (m.find()) {
-            return m.end();
-        }
+        if (m.find()) return m.end();
         return -1;
     }
 

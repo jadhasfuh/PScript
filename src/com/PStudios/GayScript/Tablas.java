@@ -2,7 +2,7 @@ package com.PStudios.GayScript;
 
 public class Tablas {
 
-	//tablabirijilla
+	//LA TABLA LR QUE SE GENERA CON LA GRAMATICA
 	String [][] laperrona2 =
 			{
 					{" "	,	"identificador"	,"entero"	,"flotante"	,"caracter"	,"comma","puntcoma"	,"op_sum"	,"op_res"	,"op_mult"	,"op_div"	,"op_igual"	,"abP"	,"ciP"		,"$"	,"P"	,"Tipo"	,"V"	,"A"	,"E"	,"T"	,"F"	},
@@ -67,14 +67,15 @@ public class Tablas {
 	//2 DECIMAL
 	//3 CARACTER
 	//24 ERROR
-
-	//ACTUALIZACION COMO UN WEY LO PUSO COM STRING LOS TUVE QUE CAMBIAR
-	public String [][] tablaS = {{"no"  		,"entero"  		, "flotante"   	,"caracter"  	,"error"},
+	//ACTUALIZACION COMO UN WEY LO PUSO COMO STRING LOS TUVE QUE CAMBIAR
+	public String [][] tablaS = {
+			{"no"  		,"entero"  		, "flotante"   	,"caracter"  	,"error"},
 			{"entero" 		,"1,entero"		, "1,flotante" 	,"0,error "		,"0,error"},
 			{"flotante" 	,"1,flotante"	, "1,flotante" 	,"0,error"		,"0,error"},
 			{"caracter" 	,"0,error"		, "0,error"		,"1,caracter" 	,"0,error"},
-			{"error"		,"0,error"		, "0,error"		,"0,error"		,"0,error"}};
-
+			{"error"		,"0,error"		, "0,error"		,"0,error"		,"0,error"}
+	};
 	//VALORES QUE NO TIENEN SEMANTICA, PARA PODER VALIDAR COSAS
 	public String []vec_operadores = {"$","op_sum","op_res","op_mult","op_div","abP","ciP","comma","puntcoma","op_igual"};
+
 }
