@@ -1,18 +1,17 @@
 package com.PStudios.GayScript;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Stack;
 
 public class SimbolToken {
+
     private String[][] tablaToken =
             {
-                    {"identificador",   "1","24"},//ESTE ES DEPENDEIENTE DEL TIPO SEA
-                    //DECLARO NUEVO O DESDE EL PRINCIPIO POR LO QUE SE ESTABLECERA CON UN METODO
-                    {"id_ent",          "2","01"},
+                    {"identificador",   "1","24"},                          // ESTE ES DEPENDIENTE DEL TIPO SEA DECLARA NUEVO O DESDE
+                    {"id_ent",          "2","01"},                          // EL PRINCIPIO POR LO QUE SE ESTABLECERA CON UN METODO
                     {"id_dec",          "3","02"},
                     {"id_cart",         "4","03"}
-            };  //clasificacion, atributo
+            };       //CLASIFICACION,    ATRIBUTO
 
     private String[][] tablaSimbolos =
             {
@@ -29,108 +28,32 @@ public class SimbolToken {
 
     private String[][] tablaReservadas=
             {
-                    {"if",      "si",       "14","04"}, //establecer el tipo de dato
+                    {"if",      "si",       "14","04"},                      // ESTABLECER EL TIPO DE DATO
                     {"while",   "mientras", "15","04"},
                     {"float",   "flotante", "16","02"},
                     {"int",     "entero",   "17","01"},
                     {"char",    "caracter", "18","03"},
-            };//Lexema, clasificacion, atributo
+            };      //LEXEMA, CLASIFICACION, ATRIBUTO
 
     String clexema;
-    int tipoda,valor;
-    //LA BANDERA DE TIPO PARA EL ID
-    boolean bantipo=false, banpuntoc=false;
+    boolean bantipo=false, banpuntoc=false;                                  // LA BANDERA DE TIPO PARA EL ID
     ArrayList<Simbolos> listaO= new ArrayList<Simbolos> ();
-    Stack<Simbolos> PilaS= new Stack<Simbolos> ();
     ArrayList<String> tablaS= new ArrayList<String> ();
+    Stack<Simbolos> PilaS= new Stack<Simbolos> ();
     Stack<Integer> pilaTipo = new Stack<Integer>();
 
-    //definimos el tipo que es
-    public int get_tipo() {
-        return tipoda;
-    }
-    //sacamos el lexema
-    public String get_lex() {
-        return clexema;
-    }
-    //sacamos el valor, que es un id
-    public int get_valor() {
-        return valor;
-    }
-    //Retorna el Valor de las palabras reservadas
-    public boolean reReserv (String cad){
-        boolean esReserv = false;
-        for (int i = 0; i < tablaReservadas.length; i++) {
-            if (tablaReservadas[i][0].equals(cad)) {
-                esReserv = true;
-                break;
-            }
-        }return esReserv;
-    }
-
-
-
-    //Busca el token correspondiente si es por Lexema para aquellos unicos
-    public int buscaTokenCar(String Lexema){
-        int token=0;
-        for (int i = 0; i < tablaSimbolos.length; i++) {
-            if(tablaSimbolos[i][0].equals(Lexema)){
-                token=Integer.parseInt(tablaSimbolos[i][2]);
-
-                break;
-            }
-        }
-        return token;
-    }
-    //busca el token correspondiente por clasificacion para aquellos que no son unicos
-    public int buscaTokenClasif(String Clasif){
-        int token=0;
-        for (int i = 0; i < tablaToken.length; i++) {
-            if(tablaToken[i][0].equalsIgnoreCase(Clasif)){
-                token=Integer.parseInt(tablaToken[i][1]);
-                break;
-            }
-        }
-        return token;
-    }
-    public void addSimbol(String lex, String token) {
-        String tokenMot="";
-        for (int i = 0; i < tablaToken.length; i++) {
-            if(tablaToken[i][1].equals(lex)){
-                tokenMot=tablaToken[i][0];
-                if (tokenMot.equals("identificador")) {
-                    if(isRegistred(lex)) {//CHECAMOS SI ESTA REGISTRADO
-                        //se llena
-                        Simbolos e= ObtTipoE(lex);//OBTIENE EL TIPO EXISTENTE EL CURRENT LEXEMA
-                        listaO.add(e);
-                    }else {
-                        Simbolos e= new Simbolos(lex, tablaToken[i][0], buscaUlt());
-                        listaO.add(e);
-                        tablaS.add(lex);
-                    }
-                }
-
-                break;
-            }
-        }
-    }
-    public String buscaTokenPalabra(String cad, int c) {
-        String tokenMot="";
-        //AQUI BUSCAMOS EL TIPO DE DATO QUE DEVOLVERA, COMO BUSCA SU ASIGNACION
-        if (c==1) {//palabras reservadas
+    public String buscaTokenPalabra(String cad, int c) {                     // AQUI BUSCAMOS EL TIPO DE DATO QUE DEVOLVERA,
+        String tokenMot="";                                                  // COMO BUSCA SU ASIGNACION
+        if (c==1) {                                                          // PALABRAS RESERVADAS
             for (int i = 0; i < tablaReservadas.length; i++) {
                 if(tablaReservadas[i][0].equals(cad)){
                     tokenMot=tablaReservadas[i][1];
-                    //ES ALGUNO DE ESTOS
-                    if (tokenMot.equals("flotante")||tokenMot.equals("entero")||tokenMot.equals("caracter")) {
-                        // pilaTipo.add(tablaReservadas[i][3]);//tipo de dato
-                    }
                     break;
                 }
             }
             return tokenMot;
         }
-        if (c==2) {//caracteres simples
+        if (c==2) {                                                          // CARACTERES SIMPLES
             for (int i = 0; i < tablaSimbolos.length; i++) {
                 if(tablaSimbolos[i][0].equals(cad)){
                     tokenMot=tablaSimbolos[i][1];
@@ -142,14 +65,13 @@ public class SimbolToken {
             }
             return tokenMot;
         }
-        if (c==3) {//identificadores y literales
+        if (c==3) {                                                         // IDENTIFICADORES Y LITERALES
             for (int i = 0; i < tablaToken.length; i++) {
                 if(tablaToken[i][1].equals(cad)){
                     tokenMot=tablaToken[i][0];
                     if (tokenMot.equals("identificador")) {
-                        if(isRegistred(cad)) {//CHECAMOS SI ESTA REGISTRADO
-                            //se llena
-                            Simbolos e= ObtTipoE(cad);//OBTIENE EL TIPO EXISTENTE EL CURRENT LEXEMA
+                        if(isRegistred(cad)) {                              //CHECAMOS SI ESTA REGISTRADO
+                            Simbolos e= ObtTipoE(cad);                      //OBTIENE EL TIPO EXISTENTE EL CURRENT LEXEMA
                             listaO.add(e);
                         }else {
                             Simbolos e= new Simbolos(tablaToken[i][0], cad, buscaUlt());
@@ -157,7 +79,6 @@ public class SimbolToken {
                             tablaS.add(cad);
                         }
                     }
-
                     break;
                 }
             }
@@ -165,20 +86,19 @@ public class SimbolToken {
         }
         return tokenMot;
     }
-    ///sacamos un var1 de tipo que ya se leyó
-    public Simbolos ObtTipoE(String lex) {
+
+    public Simbolos ObtTipoE(String lex) {                                  // PONEMOS UN var1 CON EL VALOR QUE YA SE LEYO
         for(int i=0; i<listaO.size(); i++) {
             Simbolos ldatos = listaO.get(i);
-            if (lex.equals(ldatos.lex))//si tiene un lexema
-                return listaO.get(i);
-        }
-        return null;
+            if (lex.equals(ldatos.lex)) return listaO.get(i);               // SI TIENE UN LEXEMA
+        } return null;
     }
+
     public int buscaUlt() {
-        if (bantipo)
-            return pilaTipo.peek();
+        if (bantipo) return pilaTipo.peek();
         return 24;
     }
+
     public int  retornaTipo(String cad) {
         int type =0;
         for (int i = 0; i < listaO.size(); i++) {
@@ -186,28 +106,19 @@ public class SimbolToken {
             if (simp.lex.equals(cad)) {
                 type=simp.tipo;
                 break;
-            }}
-        return type;
+            }
+        } return type;
     }
-    //RETORNA EL VALOR DE LOS VALROES SEMANTICOS
-    public ArrayList<Simbolos> TExp() {
-        return listaO;
-    }
-    //COMPROBAMOS SI ESTA REGISTRADO
-    public boolean isRegistred (String cad) {
+
+    public boolean isRegistred (String cad) {                               //COMPROBAMOS SI ESTA REGISTRADO
         boolean si=false;
-        // if(retornaTipo(cad) != 24) {//COMPRUEBA SI NO ESTA EN EL 24 QUE ES EL QUE NO TIENE NADA
         for (int i = 0; i < tablaS.size(); i++) {
             String enc1=tablaS.get(i);
             if(enc1.equals(cad)) {
-                System.out.println("Coincidio en: "+enc1);
                 si=true;
                 break;
             }
-        }
-        //}else
-        // si=false;
-        return si;
+        } return si;
     }
     public boolean hay_Tipo() {
         if (bantipo)
@@ -219,16 +130,15 @@ public class SimbolToken {
             return banpuntoc;
         return banpuntoc;
     }
+
     public int EncTipo() {
         int tipo=0;
         //primero checa si hay una variable ya dada en la tabla de simbolos,
-
         //si la hay, le asigna el valor de esa variable
         //si nel, entonces buscamos el ultimo tipo de dato declarado de samanera
         //y le asinamos el valor a su pila
         return tipo;
     }
-
 
     public int buscaTokenP(String palabra){
         int token=0;
@@ -239,62 +149,18 @@ public class SimbolToken {
             }
         }
         return token;
-    }/*
-	 public String tokenlexemanum() {
-		 if (!lTokens.isEmpty()) {
-			 return lTokens.getValor(lTokens.listLenght()-1);
-		 }
-		 return "";
-	 }
-	 //Guarda el lexema, clasificaciÃ³n y token que hayamos encontrado, y lo guarda en una lista
-	 /*
-	 public void guardaToken(String token){
-	   lTokens.addValue(token);
-	 }
-	 public void tiratoken() {
-		lTokens.borrar_ultimo();
-	 }
-
-	 public int tokenLenght(){
-	     int tToken=0;
-	     tToken=lTokens.listLenght();
-	     return tToken;
-	 }
-
-	 public String tokenValue(int vToken){
-	      String valor;
-	          valor=lTokens.getValor(vToken);
-
-	     return valor;
-	 }
-
-	 public void generaError(String error){
-	    lErrores.addValue(error);
-	 }
-
-	 public void imprimeError(){
-	     for (int i = 0; i < lErrores.listLenght(); i++) {
-	         System.out.println(lErrores.getValor(i)	);
-	     }
-	 }
-	 public void imprimeTokens(){
-	     for (int i = 0; i < lTokens.listLenght(); i++) {
-	         System.out.println( lTokens.getValor(i));
-	     }
-	 }*/
-
-
-
-
+    }
 }
-///clase
+
 class Simbolos {
+
     String lex,token;
-    int tipo;//item es el lexema para el semantic el tipo para el semantic valor tabla simbolos
+    int tipo;                                                                       // ES EL LEXEMA PARA EL SEMANTICO,TABLA DE SIMBOLOS
 
     public Simbolos(String lex,String tok,int type) {
         this.lex=lex;
         this.token=tok;
         this.tipo=type;
     }
+
 }

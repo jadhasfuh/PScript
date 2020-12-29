@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum Tokens {
+
     identificador("@[_]?[A-Z|a-z|0-9]+"),
     entero("int"),
     flotante("float"),
@@ -17,7 +18,6 @@ public enum Tokens {
     abP("[(]"),
     ciP("[)]"),
     op_igual("[=]"),
-
     id_cart("['][[\\w]|[@]|[=/*-+]|[:.,{}';]|[\"]|[\\s]][']"),
     id_dec("[-]?([1-9][0-9]+[.][0-9][1-9]+|0[.][0-9][1-9]+|[1-9][0-9]+[.]0)([eE][+-][1-9][0-9]+[1-9])?"),
     id_ent("[-]?(0|([1-9][0-9]*))"),

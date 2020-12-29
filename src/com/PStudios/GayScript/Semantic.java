@@ -2,21 +2,22 @@ package com.PStudios.GayScript;
 
 import java.util.Stack;
 
-public class Semantic {
-    Stack<String> pilaS = new Stack <String> ();//ESTA PILA COMPARA
-    int temp1,temp2,temp3=0,posX=0,posY=0;//VALLORES TEMPORALES DE LAS ASIGNACIONES
-    String map1[][],retorn[],valAct="",process;
-    SimbolToken simbol;
 
-    public Semantic() {
-        //RESET A LAS VEARIABLES
+public class Semantic {
+
+    Tablas mapa;
+    Stack<String> pilaS = new Stack <String> ();                                //ESTA PILA COMPARA
+    String map1[][],retorn[],valAct="";
+    SimbolToken simbol;
+    int temp1,temp2,temp3=0,posX=0,posY=0;                                      //VALLORES TEMPORALES DE LAS ASIGNACIONES
+
+    public Semantic() {                                                         //RESET A LAS VEARIABLES
         temp1=0;
         temp2=0;
         temp3=0;
         valAct="";
-        pilaS.clear();
-        //CARGAMOS LA TABLA
-        Tablas mapa=new Tablas();
+        pilaS.clear();                                                          //CARGAMOS LA TABLA
+        mapa = new Tablas();
         simbol = new SimbolToken();
         map1=mapa.tablaS;
     }
@@ -25,8 +26,6 @@ public class Semantic {
         //UN 0 ES QUE NO ENTRO, UN 24 ENCONTRO UN ERROR
         int valres=0;
         posX=0; posY=0;
-        System.out.println("valor1"+x);
-        System.out.println("valor2"+y);
         //BUSCAMOS EL VALOR EN LA TABLA
         for (int i = 0; i < map1[i].length; i++) {
             if (map1[0][i].equals(x)) {    //ENCUENTRA LA POSICION DEL TOKEN
