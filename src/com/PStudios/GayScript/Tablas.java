@@ -20,9 +20,9 @@ public class Tablas {
 					{"11"	,	"18"			," "		," "		," "		," "	," "		," "		," "		," "		," "		," "		," "	," "		," "	," "	," "	," "	," "	," "	," "	," "	},
 					{"12"	,	"7"				,"4"		,"5"		,"6"		," "	," "		," "		," "		," "		," "		," "		," "	," "		," "	,"19"	,"2"	," "	,"3"	," "	," "	," "	},
 					{"13"	,	" "				," "		," "		," "		," "	,"20"		,"21"		,"22"		," "		," "		," "		," "	," "		," "	," "	," "	," "	," "	," "	," "	," "	},
-					{"14"	,	" "				," "		," "		," "		,"P11"	,"P11"		,"P11"		,"P11"		,"23"		,"24"		," "		," "	,"24"		," "	," "	," "	," "	," "	," "	," "	," "	},
+					{"14"	,	" "				," "		," "		," "		,"P11"	,"P11"		,"P11"		,"P11"		,"23"		,"24"		," "		," "	,"P11"		," "	," "	," "	," "	," "	," "	," "	," "	},
 					{"15"	,	" "				," "		," "		," "		,"P14"	,"P14"		,"P14"		,"P14"		,"P14"		,"P14"		," "		," "	,"P14"		," "	," "	," "	," "	," "	," "	," "	," "	},
-					{"16"	,	"I17"			," "		," "		," "		," "	," "		," "		," "		," "		," "		," "		,"16"	," "		," "	," "	," "	," "	," "	,"25"	,"14"	,"15"	},
+					{"16"	,	"17"			," "		," "		," "		," "	," "		," "		," "		," "		," "		," "		,"16"	," "		," "	," "	," "	," "	," "	,"25"	,"14"	,"15"	},
 					{"17"	,	" "				," "		," "		," "		,"P16"	,"P16"		,"P16"		,"P16"		,"P16"		,"P16"		," "		," "	,"P16"		," "	," "	," "	," "	," "	," "	," "	," "	},
 					{"18"	,	" "				," "		," "		," "		,"11"	,"12"		," "		," "		," "		," "		," "		," "	," "		," "	," "	," "	,"26"	," "	," "	," "	," "	},
 					{"19"	,	" "				," "		," "		," "		," "	," "		," "		," "		," "		," "		," "		," "	," "		,"P7"	," "	," "	," "	," "	," "	," "	," "	},
@@ -39,6 +39,7 @@ public class Tablas {
 					{"30"	,	" "				," "		," "		," "		," "	,"P13"		,"P13"		,"P13"		,"P13"		,"P13"		," "		," "	,"P13"		," "	," "	," "	," "	," "	," "	," "	," "	},
 					{"31"	,	" "				," "		," "		," "		," "	,"P15"		,"P15"		,"P15"		,"P15"		,"P15"		," "		," "	,"P15"		," "	," "	," "	," "	," "	," "	," "	," "	},
 			};
+
 	//TABLA DE PRODUCCIONES PARA HACER EL MENEO
 	String [][]lautil = {
 			{"P0","P'","P"},
@@ -60,24 +61,20 @@ public class Tablas {
 			{"P16","F","identificador"},
 
 	};
+
 	//MAPEO DE LAS CONDICIONES SEMANTICAS
 	//1 ENTERO
 	//2 DECIMAL
 	//3 CARACTER
 	//24 ERROR
+
 	//ACTUALIZACION COMO UN WEY LO PUSO COM STRING LOS TUVE QUE CAMBIAR
 	public String [][] tablaS = {{"no"  		,"entero"  		, "flotante"   	,"caracter"  	,"error"},
 			{"entero" 		,"1,entero"		, "1,flotante" 	,"0,error "		,"0,error"},
 			{"flotante" 	,"1,flotante"	, "1,flotante" 	,"0,error"		,"0,error"},
 			{"caracter" 	,"0,error"		, "0,error"		,"1,caracter" 	,"0,error"},
 			{"error"		,"0,error"		, "0,error"		,"0,error"		,"0,error"}};
+
 	//VALORES QUE NO TIENEN SEMANTICA, PARA PODER VALIDAR COSAS
 	public String []vec_operadores = {"$","op_sum","op_res","op_mult","op_div","abP","ciP","comma","puntcoma","op_igual"};
-	//PASOS
-	//HACER EL LR EN BASE AL LL QUE TENEMOS
-	//CONDCIONAR LA PARTE DE LOS REDUCE, ES LO UNICO QUE SEA HARA
-	//LLAMAR EL SEMNTICO DESDE AQUI Y COMPARAR EL SEMANTICO DESDE AQUI
-	//VALIDAR EL SEMANTICO Y EL SINTACTICO
-	//QUE FALTA HACER? VLA PILA SEMANTICA SE ETRAE AQUI Y SE HACE LA COMAPRARACION, PERO ANTES LA DEBEMOS DED LLENAR
-	//DONDE MADRES? EN EL LEXICO CREO
 }

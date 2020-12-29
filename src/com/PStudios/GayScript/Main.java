@@ -4,9 +4,11 @@ import java.util.Scanner;
 
 public class Main {
 
-    //static String cadena1 = "int @x, @y;\n @x=@y;";
-    static String cadena1 = "int @x,@z; float @y,@w,@zapo; \n@A = @x+@y-@z*@w;";
-    //static String cadena1 = "int @x,@z; float @y,@w,@A; \n@A = @x+@y-@z*@w;";
+    //static String cadena1 = "int @x, @y;\n @x=@y;"; //esta cadena utilizaremos mi pana
+    static String cadena1 = "int @x,@z; float @y,@w,@zapo; \n@A = @x+@y-@z*@w;"; //esta cadena utilizaremos mi pana
+    //static String cadena1 = "int @x,@z; float @y,@w,@A; \n@A = (@x+@y)-@z*@w;"; //esta cadena utilizaremos mi pana
+    //static String cadena1 = "int @x,@z; float @y,@w,@A; \n@A = @x+@y-(@z*@w);"; //esta cadena utilizaremos mi pana
+    //static String cadena1 = "int @x,@z; float @y,@w,@A; \n@A = @x+@y-(@z*@w;"; //esta cadena utilizaremos mi pana
 
     String tokens = "Analisis Lexico\n";
     Scanner po = new Scanner(System.in);

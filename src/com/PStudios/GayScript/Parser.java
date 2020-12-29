@@ -9,8 +9,8 @@ public class Parser {
     Tablas t = new Tablas();
     TablaSimbolos tablaSimbolos;
     Semantic sema;
-    int pos = 0, pos2 = 0, postempp = 0, nlinea = 1, estado_actual = 0;
-    boolean banredux = false, banfin = false, continuar = true, error = false;
+    int pos = 0, pos2 = 0, postempp = 0, nlinea = 1, estado_actual = 0,  hayC = 0;;
+    boolean banredux = false, banfin = false, continuar = true, error = false, banblock = false;;
     Stack<String> pila = new Stack<String>();
     String[][] table_funciones = t.laperrona2, table_produccin = t.lautil;
     String mensajeError = "", showLog = "Analisis Sintactico\n", showSema = "Pila semantica\n";
@@ -42,6 +42,9 @@ public class Parser {
                     || table_funciones[estado_actual + 1][C].equals("P10")
                     || table_funciones[estado_actual + 1][C].equals("P9")
                     || table_funciones[estado_actual + 1][C].equals("P8")) {
+                if (pila.get(pila.size() - 2).equals("abP")) {                          // EN EL CASO DE LA EXPRESION, EL DETALLE QUE SE
+                    System.out.println("hay una cerradura ");
+                }
                 Simbolo antT;                                                           // BUSCA EL VALOR CON EL LEXEMA EN LA TABLA
                 Simbolo ultT;
                 if (pila.get(pila.size() - 2).equals("puntcoma")) {                     // EN EL CASO DE LA EXPRESION, EL DETALLE QUE SE
@@ -78,6 +81,13 @@ public class Parser {
                     showLog += "Anhade uno a la pila Sema\n";
                     showSema += "" + sema.pilaS + "\n";
                     reduce(C);                                                          // PRODUCCION O DESPLAZAMIENTO
+                } else if (table_funciones[estado_actual + 1][C].equals("P15")) {       // PARA LOS () SE REMUEVEN LOS PARENTESIS
+                    pos2--;                                                             //SE RETRASA UNA POSISCION MENOS EL PUNTERO
+                    int ant = pos2 - 1;
+                    int sig = pos2 + 1;
+                    lextemp.remove(sig);
+                    lextemp.remove(ant);
+                    reduce(C);
                 } else if (table_funciones[estado_actual + 1][C].equals("P0")
                         || table_funciones[estado_actual + 1][C].equals("P1")
                         || table_funciones[estado_actual + 1][C].equals("P2")
@@ -97,6 +107,12 @@ public class Parser {
                 if (estado_actual == 9) {                                               // ESTA EN UNA ASIGNACION POR LO QUE DE UNA
                     sema.Add_PS(nue.tipo);                                              // VEZ PEDIMOS EL ANTERIOR PARA QUE LO CONOZCA
                     showSema += "" + sema.pilaS + "\n";
+                }
+            }
+            if (estado_actual == 16) {
+                if (pila.get(pila.size() - 2).equals("abP")) {// EN EL CASO DE LA EXPRESION, EL DETALLE QUE SE
+                    System.out.println("hay una cerradura ");
+                    hayC++;
                 }
             }
             showLog += "Desplaza " + toke.get(0) + " con estado I" + estado_actual + "\n";
@@ -141,6 +157,11 @@ public class Parser {
             if (produccion[prodindex].equals(pila.peek())) {                            // SI COINCIDE CONTINUA COMPARANDO CON EL SIGUIENTE
                 pila.pop();
                 if (banredux) {                                                         // QUITANDO DE LA PILA
+                    if (hayC > 0 && banblock == false) {
+                        postempp--;
+                        hayC--;
+                        banblock = true;
+                    }
                     lextemp.remove(postempp);                                           // QUITAMOS LOS LEXEMAS DE LA PILA
                     postempp--;
                 }
@@ -149,7 +170,10 @@ public class Parser {
         }
         if (banredux) {                                                                 // DESACTIVAMOS LA CONDICION POR SI ESTA ACTIVA
             pos2 = postempp;
+            pos2++;                                                                     // SE INCREMENTA UNO DEBIDO A QUE ES EL CORRESPONDIENTE A SU PRODUCCION
+            lextemp.add(pos2, lexe.get(pos2));
             banredux = false;
+            banblock = false;
         }
         if (prodindex < 0) {
             estado_actual = Integer.parseInt(pila.peek().substring(1, pila.peek().length())); // TOMA EL ULTIMO ESTADO PARA EL NUEVO
