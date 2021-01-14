@@ -7,11 +7,11 @@ public class Semantic {
 
     ArrayList<String> lexe;
     TablaSimbolos tablaSimbolos;
-    Stack<String> pilaS, pilaP;
+    Stack<String> pilaS;
     Tablas t = new Tablas();
     String mensajeError = "", showLog = "Analisis Semantico\n";
     int linea = 0, pos = 0;
-    boolean bproc, banP;
+    boolean bproc;
 
     public Semantic(ArrayList<String> l, TablaSimbolos ts) {
         lexe = l;
@@ -31,38 +31,46 @@ public class Semantic {
 
     public void ASemantico(int p, int l) {
         bproc = true;                                                                         //PROCESO ACTIVO
-        banP = false;
         linea = l;
         pos = p;
         pilaS = new Stack<String>();
-        pilaP = new Stack<String>();
         Simbolo s = revdec(lexe.get(pos - 1));
         pilaS.push(s.tipo);
-        showLog += pilaS +""+ pilaP + "\n";
+        showLog += pilaS + "\n";
         pos++;                                                                                  // EMPEZAMOS CON EL PRIMER ELEMENTO
         if (lexe.get(pos).equals("(")) {
             pos++;
         }
         pusher();
         loop();
-        finseg(pilaS);
+        finseg();
         pilaS.clear();
     }
 
-    public void finseg(Stack<String> pila){
+    public void finseg(){
         if (mensajeError.isEmpty()) {
             int CR[] = revisionT(t.tablaRS);
             if (t.tablaRS[CR[0]][CR[1]].charAt(0) == '0')
                 mensajeError += "Error Semantico en linea " + linea + ": tipos no compatibles";
             else {
-                while (pila.size() > 1) {
-                    pila.pop();
-                    showLog += pilaS +""+ pilaP + "\n";
-                    pila.pop();
-                    showLog += pilaS +""+ pilaP + "\n";
-                    pila.push(t.tablaRS[CR[0]][CR[1]].substring(2, t.tablaRS[CR[0]][CR[1]].length()));
-                    showLog += pilaS +""+ pilaP + "\n";
+                String temp = "";
+                while (pilaS.size() > 1) {
+                    if (!pilaS.get(pilaS.size()-1).equals("(")) {
+                        pilaS.pop();
+                        showLog += pilaS + "\n";
+                        pilaS.pop();
+                        showLog += pilaS + "\n";
+                        pilaS.push(t.tablaRS[CR[0]][CR[1]].substring(2, t.tablaRS[CR[0]][CR[1]].length()));
+                        showLog += pilaS + "\n";
+                    }else{
+                        temp = pilaS.peek();
+                        break;
+                    }
                 }
+                poper();
+                poper();
+                pilaS.push(temp);
+                showLog += pilaS + "\ndfdf";
             }
         }
     }
@@ -83,11 +91,7 @@ public class Semantic {
                         break;
                     case ")":
                         pos++;
-                        banP = false;
-                        finseg(pilaP);
-                        pilaS.push(pilaP.peek());
-                        pilaP.clear();
-                        showLog += pilaS +""+ pilaP + "\n";
+                        finseg();
                         break;
                     case ";":
                         bproc = false;
@@ -98,8 +102,9 @@ public class Semantic {
     }
 
     public void E2() {
-        pos++;
         Simbolo s = revdec(lexe.get(pos));
+        pusher();
+        pos++;
         pusher();
     }
 
@@ -108,7 +113,6 @@ public class Semantic {
         Simbolo s = revdec(lexe.get(pos));
         if (s != null) {
             if (lexe.get(pos).equals("(")) {
-                banP = true;
                 E2();
             }else {
                 pusher();
@@ -122,10 +126,8 @@ public class Semantic {
                     } else {
                         poper();
                         poper();
-                        if (banP == false)
-                            pilaS.push(t.tablaRA[CR[0]][CR[1]].substring(2, t.tablaRA[CR[0]][CR[1]].length()));
-                        else pilaP.push(t.tablaRA[CR[0]][CR[1]].substring(2, t.tablaRA[CR[0]][CR[1]].length()));
-                        showLog += pilaS + "" + pilaP + "\n";
+                        pilaS.push(t.tablaRA[CR[0]][CR[1]].substring(2, t.tablaRA[CR[0]][CR[1]].length()));
+                        showLog += pilaS + "\n";
                     }
                 }
             }
@@ -134,63 +136,50 @@ public class Semantic {
 
     public void pusher() {
         Simbolo s = revdec(lexe.get(pos));
-        if (banP == false) pilaS.push(s.tipo);
-        else pilaP.push(s.tipo);
-        showLog += pilaS +""+ pilaP + "\n";
+        pilaS.push(s.tipo);
+        showLog += pilaS+ "\n";
     }
 
     public void poper() {
-        if (banP == false) pilaS.pop();
-        else pilaP.pop();
-        showLog += pilaS +""+ pilaP + "\n";
+        pilaS.pop();
+        showLog += pilaS+ "\n";
     }
 
     public void T() {
         pos += 2;
         Simbolo s = revdec(lexe.get(pos));
         if (s != null) {
-            pusher();
-            int CR[] = revisionT(t.tablaRA);
-            if (t.tablaRA[CR[0]][CR[1]].charAt(0) == '0') {
-                mensajeError += "Error Semantico en linea " + linea + ": operador invalido";
-                bproc = false;
-            } else {
-                poper();
-                poper();
-                if (banP == false) pilaS.push(t.tablaRA[CR[0]][CR[1]].substring(2, t.tablaRA[CR[0]][CR[1]].length()));
-                else pilaP.push(t.tablaRA[CR[0]][CR[1]].substring(2, t.tablaRA[CR[0]][CR[1]].length()));
-                showLog += pilaS +""+ pilaP + "\n";
+            if (lexe.get(pos).equals("(")) {
+                E2();
+            }else {
+                pusher();
+                int CR[] = revisionT(t.tablaRA);
+                if (t.tablaRA[CR[0]][CR[1]].charAt(0) == '0') {
+                    mensajeError += "Error Semantico en linea " + linea + ": operador invalido";
+                    bproc = false;
+                } else {
+                    poper();
+                    poper();
+                    pilaS.push(t.tablaRA[CR[0]][CR[1]].substring(2, t.tablaRA[CR[0]][CR[1]].length()));
+                    showLog += pilaS + "\n";
+
+                }
             }
         }
     }
 
     public int[] revisionT(String tabla[][]) {
-        String t = "";
-        if (banP == false) t = pilaS.peek();
-        else t = pilaP.peek();
+        String t = pilaS.peek();
         int C = 0, R = 0;
         for (int i = 0; i < tabla[0].length; i++) {                                         // COL
-            if (banP == false) {
-                if (tabla[0][i].equals(pilaS.peek()))
-                    C = i;                                    // ENCUENTRA LA POSICION DEL TIPO
-            }else {
-                if (tabla[0][i].equals(pilaP.peek()))
-                    C = i;                                    // ENCUENTRA LA POSICION DEL TIPO
-            }
+            if (tabla[0][i].equals(pilaS.peek()))
+                    C = i;                                                                  // ENCUENTRA LA POSICION DEL TIPO
         }
-        if (banP == false) pilaS.pop();
-        else pilaP.pop();
+        pilaS.pop();
         for (int i = 0; i < tabla[0].length; i++) {                                         // REN
-            if (banP == false) {
-                if (tabla[i][0].equals(pilaS.peek()))
-                    R = i;                                    // ENCUENTRA LA POSICION DEL TIPO
-            }else{
-                if (tabla[i][0].equals(pilaP.peek()))
-                    R = i;                                    // ENCUENTRA LA POSICION DEL TIPO
-            }
+                if (tabla[i][0].equals(pilaS.peek())) R = i;                                // ENCUENTRA LA POSICION DEL TIPO
         }
-        if (banP == false) pilaS.push(t);
-        else pilaP.push(t);
+        pilaS.push(t);
         return new int[]{C, R};
     }
 
