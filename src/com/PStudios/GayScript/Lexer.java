@@ -11,13 +11,11 @@ public class Lexer {
     private String mensajeError = "";
     private Set<Character> espaciosBlanco = new HashSet<Character>();
     int nlinea = 0;
-    int lene = 1;
     int pos = 0;
     String[] lineas;
     String tipo = "";
     ArrayList<String> toke = new ArrayList<String>();                                   //TOKEN NAMES
     ArrayList<String> lexe = new ArrayList<String>();                                   //ORIGINAL SYMBOLS
-    ArrayList<String> lexetempo = new ArrayList<String>();                              //ORIGINAL SYMBOLS TEMPORAL
     TablaSimbolos tablaSimbolos;
 
     public Lexer(String filePath, TablaSimbolos tabla) {
@@ -50,10 +48,9 @@ public class Lexer {
                     if (token != Tokens.error) {
                         lexema = filepath.substring(0, end);
                         lexe.add(lexema);
-                        lexetempo.add(lexema);
                         filepath = filepath.substring(end, filepath.length());
                     }else {
-                        mensajeError += "\nError léxico en la linea " + (linea+1);
+                        mensajeError += "\nError lexico en la linea " + (linea+1);
                     }
                     if ((currentToken()+"").equals("entero")) tipo = "entero";
                     else if ((currentToken()+"").equals("flotante")) tipo = "flotante";
@@ -69,7 +66,6 @@ public class Lexer {
                         if (tablaSimbolos.buscar(lexema) == null)
                             tablaSimbolos.insertar(pos+"", lexema, lexema,"");
                     }
-
                     break;
                 }
             }

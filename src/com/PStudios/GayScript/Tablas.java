@@ -42,40 +42,40 @@ public class Tablas {
 
 	//TABLA DE PRODUCCIONES PARA HACER EL MENEO
 	String [][]lautil = {
-			{"P0","P'","P"},
-			{"P1","P","Tipo identificador V"},
-			{"P2","P","A"},
-			{"P3","Tipo","entero"},
-			{"P4","Tipo","flotante"},
-			{"P5","Tipo","caracter"},
-			{"P6","V","comma identificador V"},
-			{"P7","V","puntcoma P"},
-			{"P8","A","identificador op_igual E puntcoma"},
-			{"P9","E","E op_sum T"},
-			{"P10","E","E op_res T"},
-			{"P11","E","T"},
-			{"P12","T","T op_mult F"},
-			{"P13","T","T op_div F"},
-			{"P14","T","F"},
-			{"P15","F","abP E ciP"},
-			{"P16","F","identificador"},
+			{"P0"	,"P'"	,"P"									},
+			{"P1"	,"P"	,"Tipo identificador V"					},
+			{"P2"	,"P"	,"A"									},
+			{"P3"	,"Tipo"	,"entero"								},
+			{"P4"	,"Tipo"	,"flotante"								},
+			{"P5"	,"Tipo"	,"caracter"								},
+			{"P6"	,"V"	,"comma identificador V"				},
+			{"P7"	,"V"	,"puntcoma P"							},
+			{"P8"	,"A"	,"identificador op_igual E puntcoma"	},
+			{"P9"	,"E"	,"E op_sum T"							},
+			{"P10"	,"E"	,"E op_res T"							},
+			{"P11"	,"E"	,"T"									},
+			{"P12"	,"T"	,"T op_mult F"							},
+			{"P13"	,"T"	,"T op_div F"							},
+			{"P14"	,"T"	,"F"									},
+			{"P15"	,"F"	,"abP E ciP"							},
+			{"P16"	,"F"	,"identificador"						},
 
 	};
 
 	//MAPEO DE LAS CONDICIONES SEMANTICAS
-	//1 ENTERO
-	//2 DECIMAL
-	//3 CARACTER
-	//24 ERROR
-	//ACTUALIZACION COMO UN WEY LO PUSO COMO STRING LOS TUVE QUE CAMBIAR
-	public String [][] tablaS = {
-			{"no"  		,"entero"  		, "flotante"   	,"caracter"  	,"error"},
-			{"entero" 		,"1,entero"		, "1,flotante" 	,"0,error "		,"0,error"},
-			{"flotante" 	,"1,flotante"	, "1,flotante" 	,"0,error"		,"0,error"},
-			{"caracter" 	,"0,error"		, "0,error"		,"1,caracter" 	,"0,error"},
-			{"error"		,"0,error"		, "0,error"		,"0,error"		,"0,error"}
+	public String [][] tablaRS = {
+			{"no"  			,"entero"	 ,"flotante"  ,"caracter"	,"error"	},
+			{"entero" 		,"1,entero"	 ,"1,flotante","0,error"	,"0,error"	},
+			{"flotante" 	,"1,flotante","1,flotante","0,error"	,"0,error" 	},
+			{"caracter" 	,"0,error"	 ,"0,error"   ,"1,caracter" ,"0,error"	},
+			{"error"		,"0,error"	 ,"0,error"   ,"0,error"	,"0,error"	}
 	};
-	//VALORES QUE NO TIENEN SEMANTICA, PARA PODER VALIDAR COSAS
-	public String []vec_operadores = {"$","op_sum","op_res","op_mult","op_div","abP","ciP","comma","puntcoma","op_igual"};
+	public String [][] tablaRA = {
+			{"no"  			,"entero"	 ,"flotante"  ,"caracter"	,"error"	},
+			{"entero" 		,"1,entero"	 ,"1,flotante","0,error"	,"0,error"	},
+			{"flotante" 	,"1,flotante","1,flotante","0,error"	,"0,error" 	},
+			{"caracter" 	,"0,error"	 ,"0,error"	  ,"0,error" 	,"0,error"	},
+			{"error"		,"0,error"	 ,"0,error"	  ,"0,error"	,"0,error"	}
+	};
 
 }
