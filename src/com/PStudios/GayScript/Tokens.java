@@ -4,9 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum Tokens {
-    //idp("/[_]?[A-Z|a-z|0-9]+"),
     idp("idp"),
-	ident("@[_]?[A-Z|a-z|0-9]+"),//AVISO DESPUES DE PONER UN IDENT Y UNA LETRA PON UN \n EL ESPACIO SE LO OBVIA
+	ident("@[_]?[A-Z|a-z|0-9]+"),
     ent("ent"),
     dec("dec"),
     cart("cart"),

@@ -5,8 +5,8 @@ import java.util.Scanner;
 public class Main {
 
     static String cadena1 = "programa idp inicio \n " +
-                            "ent @c , @y ;\n " +
-                            "dec @t , @res , @slo , @j ;\n " +
+                            "ent @c , @y , @j ;\n " +
+                            "dec @t , @res , @slo;\n " +
                             "lec ( @y ) ; @c = @y + @c ; \n" +
                             " si @t > @j \n" +
                                 " inicio imp ( 34 ) ; \n" +

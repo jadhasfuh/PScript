@@ -29,20 +29,35 @@ public class Semantic {
 		return s;
 	}
 
-	public void ASemantico(int p, int l) {
+	public void ASemantico(int p, int l, int es) {
 		bproc = true;                                                                         //PROCESO ACTIVO
 		linea = l;
 		pos = p;
 		pilaS = new Stack<String>();
-		Simbolo s = revdec(lexe.get(pos - 1));
-		pilaS.push(s.tipo);
-		showLog += pilaS + "\n";
-		pos++;                                                                                  // EMPEZAMOS CON EL PRIMER ELEMENTO
-		if (lexe.get(pos).equals("(")) E2();
-		else pusher();
-		loop();
-		finseg();
-		pilaS.clear();
+		//ASIGNACIONES
+		if (es == 30){
+			Simbolo s = revdec(lexe.get(pos - 1));
+			pilaS.push(s.tipo);
+			showLog += pilaS + "\n";
+			pos++;                                                                                  // EMPEZAMOS CON EL PRIMER ELEMENTO
+			if (lexe.get(pos).equals("(")) E2();
+			else pusher();
+			loop();
+			finseg();
+			pilaS.clear();
+			//COMPARACIONES
+		}else if (es == 15){
+			pos++;
+			Simbolo s = revdec(lexe.get(pos));
+			pilaS.push(s.tipo);
+			pos += 2;
+			pusher();
+			int CR[] = revisionT(t.tablaCO);
+			if (t.tablaRA[CR[0]][CR[1]].charAt(0) == '0') mensajeError += "Error Semantico en linea " + linea + ": tipos no compatibles";
+			pilaS.clear();
+			showLog += pilaS + "\n";
+		}
+
 	}
 
 	public void finseg(){

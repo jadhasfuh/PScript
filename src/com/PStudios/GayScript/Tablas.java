@@ -157,4 +157,12 @@ public class Tablas {
 			{"error"		,"0,error"	 ,"0,error"	  ,"0,error"	,"0,error"	}
 	};
 
+	public String [][] tablaCO = {
+			{"no"  			,"entero","decimal" ,"caracter"	,"error"},
+			{"entero" 		,"1"	 ,"1" 		,"0"		,"0"	},
+			{"decimal" 	    ,"1" 	 ,"1" 		,"0"		,"0" 	},
+			{"caracter" 	,"0"	 ,"0"	  	,"1" 		,"0"	},
+			{"error"		,"0"	 ,"0"	  	,"0"		,"0"	}
+	};
+
 }
