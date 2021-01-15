@@ -38,13 +38,12 @@ public class Semantic {
         pilaS.push(s.tipo);
         showLog += pilaS + "\n";
         pos++;                                                                                  // EMPEZAMOS CON EL PRIMER ELEMENTO
-        if (lexe.get(pos).equals("(")) {
-            pos++;
-        }
-        pusher();
+        if (lexe.get(pos).equals("(")) E2();
+        else pusher();
         loop();
         finseg();
         pilaS.clear();
+        System.out.println("asd");
     }
 
     public void finseg(){
@@ -55,22 +54,19 @@ public class Semantic {
             else {
                 String temp = "";
                 while (pilaS.size() > 1) {
-                    if (!pilaS.get(pilaS.size()-1).equals("(")) {
-                        pilaS.pop();
-                        showLog += pilaS + "\n";
-                        pilaS.pop();
-                        showLog += pilaS + "\n";
-                        pilaS.push(t.tablaRS[CR[0]][CR[1]].substring(2, t.tablaRS[CR[0]][CR[1]].length()));
-                        showLog += pilaS + "\n";
-                    }else{
-                        temp = pilaS.peek();
-                        break;
-                    }
+                    if (pilaS.get(pilaS.size()-2).equals("(")) break;
+                    pilaS.pop();
+                    showLog += pilaS + "\n";
+                    pilaS.pop();
+                    showLog += pilaS + "\n";
+                    pilaS.push(t.tablaRS[CR[0]][CR[1]].substring(2, t.tablaRS[CR[0]][CR[1]].length()));
+                    showLog += pilaS + "\n";
                 }
+                temp = pilaS.peek();
                 poper();
                 poper();
                 pilaS.push(temp);
-                showLog += pilaS + "\ndfdf";
+                showLog += pilaS + "\n";
             }
         }
     }
@@ -162,7 +158,6 @@ public class Semantic {
                     poper();
                     pilaS.push(t.tablaRA[CR[0]][CR[1]].substring(2, t.tablaRA[CR[0]][CR[1]].length()));
                     showLog += pilaS + "\n";
-
                 }
             }
         }

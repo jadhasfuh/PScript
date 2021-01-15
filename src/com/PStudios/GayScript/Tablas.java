@@ -70,7 +70,7 @@ public class Tablas {
 			{"caracter" 	,"0,error"	 ,"0,error"   ,"1,caracter" ,"0,error"	},
 			{"error"		,"0,error"	 ,"0,error"   ,"0,error"	,"0,error"	}
 	};
-	public String [][] tablaRA = {
+	public String [][] tablaRA = { //Aqui esta el pan
 			{"no"  			,"entero"	 ,"flotante"  ,"caracter"	,"error"	},
 			{"entero" 		,"1,entero"	 ,"1,flotante","0,error"	,"0,error"	},
 			{"flotante" 	,"1,flotante","1,flotante","0,error"	,"0,error" 	},
