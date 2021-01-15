@@ -4,11 +4,17 @@ import java.util.Scanner;
 
 public class Main {
 
-    static String cadena1 = "int @x, @y;\n @x=@y;";                                             //ESTE ES LA CADENA A ANALIZAR
-    //static String cadena1 = "int @x,@z; float @y,@w,@zapo; \n@A = @x+@y-@z*@w;";              //ESTOS SON MAS EJEMPLOS
-    //static String cadena1 = "int @x,@z; float @y,@w,@A; \n@A = (@x+@y)-@z*@w;";
-    //static String cadena1 = "int @x,@z; float @y,@w,@A; \n@A = @x+@y-@z*@w;";
-    //static String cadena1 = "int @x,@z; float @y,@w,@A; \n@A = @x+@y-(@z*@w);";
+    static String cadena1 = "programa idp inicio \n " +
+                            "ent @c , @y ;\n " +
+                            "dec @t , @res , @slo , @j ;\n " +
+                            "lec ( @y ) ; @c = @y + @c ; \n" +
+                            " si @t > @j \n" +
+                                " inicio imp ( 34 ) ; \n" +
+                                " imp ( @t ) ; \n" +
+                            "sino \n" +
+                            "  @res = @res - @res * @c ; \n" +
+                             " imp ( @res ) ; \n " +
+                            "endif \n fin";
 
     String tokens = "Analisis Lexico\n";
     Scanner po = new Scanner(System.in);
@@ -19,12 +25,12 @@ public class Main {
     }                                                                                           //ACOPLE A EDITOR DE TEXTO
 
     public void inicio (String cad) {
-        TablaSimbolos tabla = new TablaSimbolos();
-        Lexer lexer = new Lexer(cad,tabla);
+        TablaSimbolos tablaSimbolos = new TablaSimbolos();
+        Lexer lexer = new Lexer(cad,tablaSimbolos);
         tokens += lexer.toke;
-        String error = "";
-        error = lexer.getMensajeError();
-        Parser parser = new Parser(lexer.toke, lexer.lexe,lexer.lexetempo, tabla);
+        Semantic semantic = new Semantic(lexer.lexe, tablaSimbolos);
+        Parser parser = new Parser(lexer.toke, lexer.lexe, tablaSimbolos, semantic);
+
         int op = 0;
         while (op != 5){
             System.out.println("Fin de proceso. \n1)Ver Analisis Lexico\n2)Ver Analisis Sintactico \n3)Tabla de jerarquia \n4)Tabla semantica\n5)Salir");
@@ -33,17 +39,19 @@ public class Main {
                 case 1:
                     System.out.println(tokens);
                     System.out.println(lexer.lexe);
-                    System.out.println(error);
+                    System.out.println(lexer.getMensajeError());
                     break;
                 case 2:
                     System.out.println(parser.getLog());
                     System.out.println(parser.getMensajeError());
                     break;
                 case 3:
-                    tabla.imprimir();
+                    tablaSimbolos.imprimir();
                     break;
                 case 4:
-                    System.out.println(parser.getSema());
+                    System.out.println(semantic.getLog());
+                    System.out.println(semantic.getMensajeError());
+                    if (semantic.getMensajeError().isEmpty()) System.out.print("Semantica correcta! \n");
                     break;
             }
         }

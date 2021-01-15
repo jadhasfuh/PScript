@@ -1,91 +1,188 @@
 package com.PStudios.GayScript;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
-
 public class Semantic {
-    Stack<String> pilaS = new Stack <String> ();                                    //ESTA PILA COMPARA
-    int temp1,temp2,temp3=0,posX=0,posY=0;                                          //VALLORES TEMPORALES DE LAS ASIGNACIONES
-    String map1[][],retorn[],valAct="",process;
-    SimbolToken simbol;
 
-    public Semantic() {
-        temp1=0;
-        temp2=0;
-        temp3=0;
-        valAct="";
-        pilaS.clear();
-        Tablas mapa=new Tablas();
-        simbol = new SimbolToken();
-        map1=mapa.tablaS;
-    }
+	ArrayList<String> lexe;
+	TablaSimbolos tablaSimbolos;
+	Stack<String> pilaS;
+	Tablas t = new Tablas();
+	String mensajeError = "", showLog = "Analisis Semantico\n";
+	int linea = 0, pos = 0;
+	boolean bproc;
 
-    public int getSeman(String x, String y) {                                        //UN 0 ES QUE NO ENTRO, UN 24 ENCONTRO UN ERROR
-        int valres=0;
-        posX=0; posY=0;
-        for (int i = 0; i < map1[i].length; i++) {                                   //BUSCAMOS EL VALOR EN LA TABLA
-            if (map1[0][i].equals(x)) {                                              //ENCUENTRA LA POSICION DEL TOKEN
-                posX = i;
-                break;
-            }
-        }//POSY
-        for (int i = 0; i < 5; i++) {
-            if (map1[i][0].equals(y)) {                                              //ENCUENTRA LA POSICION DEL TOKEN
-                posY = i;
-                break;
-            }
-        }
-        retorn=map1[posX][posY].split(",");
-        valres=Integer.parseInt(retorn[0]);
-        valAct=retorn[1];
-        return valres;
-    }
+	public Semantic(ArrayList<String> l, TablaSimbolos ts) {
+		lexe = l;
+		tablaSimbolos = ts;
+	}
 
-    public String getAct() {
-        return valAct;
-    }
+	public Simbolo revdec(String sim) {                                                              //REVISA DECLARACION
+		Simbolo s = null;
+		try {
+			s = (Simbolo) tablaSimbolos.buscar(sim);
+		} catch (Exception e) {
+			mensajeError += "Error Semantico en linea " + linea + ": variable no declarada";        //SI EL SIMBOLO NO HA SIDO
+			bproc = false;                                                                          //DECLARADO DETIENE Y MANEJA EL ERROR
+		}
+		return s;
+	}
 
-    void Add_PS(String type) {                                                        //AGREGAMOS EL TIPO EN LA PILA SEMANTICA
-        if (!type.equals("")) pilaS.push(type);                                       //NO ESTA VACIO, SI LO ESTA DE UNA VEZ MARCAMOS UN ERROR EN LA SEMANTCA
-        else valAct="";                                                               //LO DEJAMOS SIN NADA
-    }
+	public void ASemantico(int p, int l) {
+		bproc = true;                                                                         //PROCESO ACTIVO
+		linea = l;
+		pos = p;
+		pilaS = new Stack<String>();
+		Simbolo s = revdec(lexe.get(pos - 1));
+		pilaS.push(s.tipo);
+		showLog += pilaS + "\n";
+		pos++;                                                                                  // EMPEZAMOS CON EL PRIMER ELEMENTO
+		if (lexe.get(pos).equals("(")) E2();
+		else pusher();
+		loop();
+		finseg();
+		pilaS.clear();
+	}
 
-    public void asigna(String tokn, String lex) {
-        if ((tokn + "").equals("identificador")) {
-            if(simbol.isRegistred(lex)) {                                               //CHECAMOS SI ESTA REGISTRADO
-                if (simbol.hay_Tipo()) {
-                    if (simbol.retornaTipo(lex) == simbol.buscaUlt()) {                 //PRIMERO REVISAMOS SI ESTA EN EL MISMO TIPO DE DATO
-                        Simbolos e= simbol.ObtTipoE(lex);                               //OBTIENE EL TIPO EXISTENTE EL CURRENT LEXEMA
-                        simbol.listaO.add(e);
-                    }else {                                                             //AGREGAMOS EL LEXEMA EN EL TIPO DE ERROR 24
-                        Simbolos error= new Simbolos(lex, tokn, 24);
-                        simbol.listaO.add(error);
-                    }}
-                else {
-                    //NO HAY TIPO
-                    //se llena
-                    Simbolos e= simbol.ObtTipoE(lex);                                    //OBTIENE EL TIPO EXISTENTE EL CURRENT LEXEMA
-                    simbol.listaO.add(e);
-                }
-            }
+	public void finseg(){
+		if (mensajeError.isEmpty()) {
+			int CR[] = revisionT(t.tablaRS);
+			if (t.tablaRS[CR[0]][CR[1]].charAt(0) == '0')
+				mensajeError += "Error Semantico en linea " + linea + ": tipos no compatibles";
+			else {
+				String temp = "";
+				while (pilaS.size() > 1) {
+					if (pilaS.get(pilaS.size()-2).equals("(")) break;
+					pilaS.pop();
+					showLog += pilaS + "\n";
+					pilaS.pop();
+					showLog += pilaS + "\n";
+					pilaS.push(t.tablaRS[CR[0]][CR[1]].substring(2, t.tablaRS[CR[0]][CR[1]].length()));
+					showLog += pilaS + "\n";
+				}
+				temp = pilaS.peek();
+				poper();
+				poper();
+				pilaS.push(temp);
+				showLog += pilaS + "\n";
+			}
+		}
+	}
 
-            else {
-                if(!simbol.hay_Tipo()) {                                                //SI NO ESTA EN UNA ASIGNACION Y NO ESTA REGISTRADO
-                    Simbolos error= new Simbolos(lex, tokn + "", 24);
-                    simbol.listaO.add(error);
-                    simbol.tablaS.add(lex);
-                }else {
-                    Simbolos e= new Simbolos(lex, tokn , simbol.buscaUlt());
-                    simbol.listaO.add(e);
-                    simbol.tablaS.add(lex);
-                }
-            }
-        }else if ((tokn + "").equals("flotante")||(tokn + "").equals("entero")||(tokn + "").equals("caracter")) {
-            simbol.bantipo=true;
-            simbol.pilaTipo.push(simbol.buscaTokenP((tokn) + ""));                  //TIPO DE DATO
-        }else if ((tokn + "").equals("puntcoma")) simbol.bantipo=false;
-        else if ((tokn + "").equals("comma")) simbol.bantipo=true;
-        else if ((tokn + "").equals("op_igual")) simbol.bantipo=false;
+	public void loop() {
+		while (bproc == true) {
+			// BUSCA EL FIN SIN PELIGROS A CICLARSE
+			Simbolo s = revdec(lexe.get(pos));
+			if (s != null) {
+				switch (lexe.get(pos + 1)) {
+					case "+":
+					case "-":
+						E();
+						break;
+					case "*":
+					case "/":
+						T();
+						break;
+					case ")":
+						pos++;
+						finseg();
+						break;
+					case ";":
+						bproc = false;
+						break;
+				}
+			}
+		}
+	}
 
-    }
+	public void E2() {
+		Simbolo s = revdec(lexe.get(pos));
+		pusher();
+		pos++;
+		pusher();
+	}
+
+	public void E() {
+		pos += 2;
+		Simbolo s = revdec(lexe.get(pos));
+		if (s != null) {
+			if (lexe.get(pos).equals("(")) {
+				E2();
+			}else {
+				pusher();
+				if (lexe.get(pos + 1).equals("*") || lexe.get(pos + 1).equals("/")) {
+					T();
+				} else {
+					int CR[] = revisionT(t.tablaRA);
+					if (t.tablaRA[CR[0]][CR[1]].charAt(0) == '0') {
+						mensajeError += "Error Semantico en linea " + linea + ": operador invalido";
+						bproc = false;
+					} else {
+						poper();
+						poper();
+						pilaS.push(t.tablaRA[CR[0]][CR[1]].substring(2, t.tablaRA[CR[0]][CR[1]].length()));
+						showLog += pilaS + "\n";
+					}
+				}
+			}
+		}
+	}
+
+	public void pusher() {
+		Simbolo s = revdec(lexe.get(pos));
+		pilaS.push(s.tipo);
+		showLog += pilaS+ "\n";
+	}
+
+	public void poper() {
+		pilaS.pop();
+		showLog += pilaS+ "\n";
+	}
+
+	public void T() {
+		pos += 2;
+		Simbolo s = revdec(lexe.get(pos));
+		if (s != null) {
+			if (lexe.get(pos).equals("(")) {
+				E2();
+			}else {
+				pusher();
+				int CR[] = revisionT(t.tablaRA);
+				if (t.tablaRA[CR[0]][CR[1]].charAt(0) == '0') {
+					mensajeError += "Error Semantico en linea " + linea + ": operador invalido";
+					bproc = false;
+				} else {
+					poper();
+					poper();
+					pilaS.push(t.tablaRA[CR[0]][CR[1]].substring(2, t.tablaRA[CR[0]][CR[1]].length()));
+					showLog += pilaS + "\n";
+				}
+			}
+		}
+	}
+
+	public int[] revisionT(String tabla[][]) {
+		String t = pilaS.peek();
+		int C = 0, R = 0;
+		for (int i = 0; i < tabla[0].length; i++) {                                         // COL
+			if (tabla[0][i].equals(pilaS.peek()))
+				C = i;                                                                  // ENCUENTRA LA POSICION DEL TIPO
+		}
+		pilaS.pop();
+		for (int i = 0; i < tabla[0].length; i++) {                                         // REN
+			if (tabla[i][0].equals(pilaS.peek())) R = i;                                // ENCUENTRA LA POSICION DEL TIPO
+		}
+		pilaS.push(t);
+		return new int[]{C, R};
+	}
+
+	public String getMensajeError() {
+		return mensajeError;
+	}
+
+	public String getLog() {
+		return showLog;
+	}
+
 }
