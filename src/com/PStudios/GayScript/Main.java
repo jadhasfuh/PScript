@@ -4,11 +4,11 @@ import java.util.Scanner;
 
 public class Main {
 
-    static String cadena1 = "float @x;\n int @y;\n @y=(@x+(@y+@y)-(@x+@y)*(@x+@y*@x));";                                             //ESTE ES LA CADENA A ANALIZAR
+    //static String cadena1 = "float @x;\n int @y;\n @y=(@x+(@y+@y)-(@x+@y)*(@x+@y*@x));";                                             //ESTE ES LA CADENA A ANALIZAR
     //static String cadena1 = "int @x,@z; float @y,@w; \n@x = (@x+@w)*@x;";              //ESTOS SON MAS EJEMPLOS
     //static String cadena1 = "int @x,@z; float @y,@w,@A; \n@A = (@x+@y)-@z*@w;";
     //static String cadena1 = "char @x,@z,@A; float @y,@w; \n @A = @x+@y-@z*@w;";
-    //static String cadena1 = "int @x,@z; float @y,@w,@A; \n@A = @x+@y-(@z*@w);";
+    static String cadena1 = "int @x,@z; float @y,@w,@A; \n@A = @x+@y-(@z*@w);";
 
     String tokens = "Analisis Lexico\n";
     Scanner po = new Scanner(System.in);

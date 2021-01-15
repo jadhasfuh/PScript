@@ -43,7 +43,6 @@ public class Semantic {
         loop();
         finseg();
         pilaS.clear();
-        System.out.println("asd");
     }
 
     public void finseg(){
