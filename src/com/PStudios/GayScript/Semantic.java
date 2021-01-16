@@ -18,17 +18,6 @@ public class Semantic {
 		tablaSimbolos = ts;
 	}
 
-	public Simbolo revdec(String sim) {                                                              //REVISA DECLARACION
-		Simbolo s = null;
-		try {
-			s = (Simbolo) tablaSimbolos.buscar(sim);
-		} catch (Exception e) {
-			mensajeError += "Error Semantico en linea " + linea + ": variable no declarada";        //SI EL SIMBOLO NO HA SIDO
-			bproc = false;                                                                          //DECLARADO DETIENE Y MANEJA EL ERROR
-		}
-		return s;
-	}
-
 	public void ASemantico(int p, int l, int es) {
 		bproc = true;                                                                         //PROCESO ACTIVO
 		linea = l;
@@ -45,6 +34,7 @@ public class Semantic {
 			loop();
 			finseg();
 			pilaS.clear();
+			showLog += pilaS + "\n";
 			//COMPARACIONES
 		}else if (es == 15){
 			pos++;
@@ -53,18 +43,43 @@ public class Semantic {
 			pos += 2;
 			pusher();
 			int CR[] = revisionT(t.tablaCO);
-			if (t.tablaRA[CR[0]][CR[1]].charAt(0) == '0') mensajeError += "Error Semantico en linea " + linea + ": tipos no compatibles";
+			if (t.tablaRA[CR[0]][CR[1]].charAt(0) == '0') mensajeError += "Error Semantico en linea " + linea + ": tipos no compatibles\n";
+			pilaS.clear();
+			showLog += pilaS + "\n";
+			//IMPRIME
+		}else if (es == 18){
+			pos += 2;
+			Simbolo s = revdec(lexe.get(pos));
+			pusher();
+			pilaS.clear();
+			showLog += pilaS + "\n";
+			//LECTURA
+		}else if (es == 19){
+			pos += 2;
+			Simbolo s = revdec(lexe.get(pos));
+			pusher();
 			pilaS.clear();
 			showLog += pilaS + "\n";
 		}
+	}
 
+	public Simbolo revdec(String sim) {                                                              //REVISA DECLARACION
+		Simbolo s = null;
+		try {
+			s = (Simbolo) tablaSimbolos.buscar(sim);
+			if (s.tipo.equals("error")) mensajeError += "Error Semantico en linea " + linea + ": variable no declarada\n";
+		} catch (Exception e) {
+			mensajeError += "Error Semantico en linea " + linea + ": variable no declarada\n";        //SI EL SIMBOLO NO HA SIDO
+			bproc = false;                                                                          //DECLARADO DETIENE Y MANEJA EL ERROR
+		}
+		return s;
 	}
 
 	public void finseg(){
 		if (mensajeError.isEmpty()) {
 			int CR[] = revisionT(t.tablaRS);
 			if (t.tablaRS[CR[0]][CR[1]].charAt(0) == '0')
-				mensajeError += "Error Semantico en linea " + linea + ": tipos no compatibles";
+				mensajeError += "Error Semantico en linea " + linea + ": tipos no compatibles\n";
 			else {
 				String temp = "";
 				while (pilaS.size() > 1) {
@@ -131,7 +146,7 @@ public class Semantic {
 				} else {
 					int CR[] = revisionT(t.tablaRA);
 					if (t.tablaRA[CR[0]][CR[1]].charAt(0) == '0') {
-						mensajeError += "Error Semantico en linea " + linea + ": operador invalido";
+						mensajeError += "Error Semantico en linea " + linea + ": operador invalido\n";
 						bproc = false;
 					} else {
 						poper();
@@ -165,7 +180,7 @@ public class Semantic {
 				pusher();
 				int CR[] = revisionT(t.tablaRA);
 				if (t.tablaRA[CR[0]][CR[1]].charAt(0) == '0') {
-					mensajeError += "Error Semantico en linea " + linea + ": operador invalido";
+					mensajeError += "Error Semantico en linea " + linea + ": operador invalido\n";
 					bproc = false;
 				} else {
 					poper();

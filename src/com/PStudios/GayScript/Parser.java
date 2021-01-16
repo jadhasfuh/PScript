@@ -39,18 +39,16 @@ public class Parser {
         }else{
             showLog += "Desplaza " + toke.get(0) + " con estado I" + estado_actual + "\n";
             //ASIGNACIONES
-            if (table_funciones[estado_actual + 1][C].equals("30"))
+            if (table_funciones[estado_actual + 1][C].equals("30") ||
+                table_funciones[estado_actual + 1][C].equals("19") ||
+                table_funciones[estado_actual + 1][C].equals("18") ||
+                table_funciones[estado_actual + 1][C].equals("15") ){
+                int e = Integer.parseInt(table_funciones[estado_actual + 1][C]);
                 try {
-                    semantic.ASemantico(pos, nlinea,30);
-                }catch (Exception e){}
-            //LECTURA
-            //ESCRITURA
-            //COMPARACIONES
-            if (table_funciones[estado_actual + 1][C].equals("15"))
-                try {
-                    semantic.ASemantico(pos, nlinea, 15);
-                }catch (Exception e){}
-            desplaza(C);                                                                        // DEACUERDO A LO ENCONTRADO
+                    semantic.ASemantico(pos, nlinea,e);
+                }catch (Exception e1){}
+            }
+            desplaza(C);                                                                // DEACUERDO A LO ENCONTRADO
         }
     }
 
