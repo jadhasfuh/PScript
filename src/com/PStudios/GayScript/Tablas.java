@@ -102,7 +102,7 @@ public class Tablas {
 			{"P5","CREAS","STS"},
 			{"P6","LIST","TYPE ident SIG"},
 			{"P7","TYPE","ent"},
-			{"P8","TYPE","cad"},
+			{"P8","TYPE","cart"},
 			{"P9","TYPE","dec"},
 			{"P10","SIG","comma ident SIG"},
 			{"P11","SIG","pnc LIST"},

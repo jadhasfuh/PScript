@@ -12,6 +12,7 @@ public class Semantic {
 	String mensajeError = "", showLog = "Analisis Semantico\n";
 	int linea = 0, pos = 0;
 	boolean bproc;
+	Parser ban;
 
 	public Semantic(ArrayList<String> l, TablaSimbolos ts) {
 		lexe = l;
@@ -19,42 +20,45 @@ public class Semantic {
 	}
 
 	public void ASemantico(int p, int l, int es) {
-		bproc = true;                                                                         //PROCESO ACTIVO
+		bproc = true; // PROCESO ACTIVO
 		linea = l;
 		pos = p;
 		pilaS = new Stack<String>();
-		//ASIGNACIONES
-		if (es == 30){
+		// ASIGNACIONES
+		if (es == 30) {
 			Simbolo s = revdec(lexe.get(pos - 1));
 			pilaS.push(s.tipo);
 			showLog += pilaS + "\n";
-			pos++;                                                                                  // EMPEZAMOS CON EL PRIMER ELEMENTO
-			if (lexe.get(pos).equals("(")) E2();
-			else pusher();
+			pos++; // EMPEZAMOS CON EL PRIMER ELEMENTO
+			if (lexe.get(pos).equals("("))
+				E2();
+			else
+				pusher();
 			loop();
 			finseg();
 			pilaS.clear();
 			showLog += pilaS + "\n";
-			//COMPARACIONES
-		}else if (es == 15){
+			// COMPARACIONES
+		} else if (es == 15) {
 			pos++;
 			Simbolo s = revdec(lexe.get(pos));
 			pilaS.push(s.tipo);
 			pos += 2;
 			pusher();
 			int CR[] = revisionT(t.tablaCO);
-			if (t.tablaRA[CR[0]][CR[1]].charAt(0) == '0') mensajeError += "Error Semantico en linea " + linea + ": tipos no compatibles\n";
+			if (t.tablaRA[CR[0]][CR[1]].charAt(0) == '0')
+				mensajeError += "Error Semantico en linea " + linea + ": tipos no compatibles\n";
 			pilaS.clear();
 			showLog += pilaS + "\n";
-			//IMPRIME
-		}else if (es == 18){
+			// IMPRIME
+		} else if (es == 18) {
 			pos += 2;
 			Simbolo s = revdec(lexe.get(pos));
 			pusher();
 			pilaS.clear();
 			showLog += pilaS + "\n";
-			//LECTURA
-		}else if (es == 19){
+			// LECTURA
+		} else if (es == 19) {
 			pos += 2;
 			Simbolo s = revdec(lexe.get(pos));
 			pusher();
@@ -63,27 +67,38 @@ public class Semantic {
 		}
 	}
 
-	public Simbolo revdec(String sim) {                                                              //REVISA DECLARACION
+	public Simbolo revdec(String sim) { // REVISA DECLARACION
 		Simbolo s = null;
 		try {
 			s = (Simbolo) tablaSimbolos.buscar(sim);
-			if (s.tipo.equals("error")) mensajeError += "Error Semantico en linea " + linea + ": variable no declarada\n";
+			if (s.tipo.equals("error")) {
+				mensajeError += "Error Semantico en linea " + linea + ": variable no declarada, valor: "
+						+ s.nombre.toString() + " \n";
+			}
 		} catch (Exception e) {
-			mensajeError += "Error Semantico en linea " + linea + ": variable no declarada\n";        //SI EL SIMBOLO NO HA SIDO
-			bproc = false;                                                                          //DECLARADO DETIENE Y MANEJA EL ERROR
+			mensajeError += "Error Semantico en linea " + linea + ": variable no declarada\n"; // SI EL SIMBOLO NO HA
+			// SIDO
+			bproc = false; // DECLARADO DETIENE Y MANEJA EL ERROR
+			ban.continuar = false;
+			ban.error = true;
+			ban.mensajeError += "Ocurrio un error de semantica, pulse la op. 4 para ver";
 		}
 		return s;
 	}
 
-	public void finseg(){
+	public void finseg() {
 		if (mensajeError.isEmpty()) {
 			int CR[] = revisionT(t.tablaRS);
-			if (t.tablaRS[CR[0]][CR[1]].charAt(0) == '0')
+			if (t.tablaRS[CR[0]][CR[1]].charAt(0) == '0') {
 				mensajeError += "Error Semantico en linea " + linea + ": tipos no compatibles\n";
-			else {
+				ban.continuar = false;
+				ban.error = true;
+				ban.mensajeError += "Ocurrio un error de semantica, pulse la op. 4 para ver";
+			} else {
 				String temp = "";
 				while (pilaS.size() > 1) {
-					if (pilaS.get(pilaS.size()-2).equals("(")) break;
+					if (pilaS.get(pilaS.size() - 2).equals("("))
+						break;
 					pilaS.pop();
 					showLog += pilaS + "\n";
 					pilaS.pop();
@@ -139,7 +154,7 @@ public class Semantic {
 		if (s != null) {
 			if (lexe.get(pos).equals("(")) {
 				E2();
-			}else {
+			} else {
 				pusher();
 				if (lexe.get(pos + 1).equals("*") || lexe.get(pos + 1).equals("/")) {
 					T();
@@ -148,11 +163,17 @@ public class Semantic {
 					if (t.tablaRA[CR[0]][CR[1]].charAt(0) == '0') {
 						mensajeError += "Error Semantico en linea " + linea + ": operador invalido\n";
 						bproc = false;
+						ban.continuar = false;
+						ban.error = true;
+						ban.mensajeError += "Ocurrio un error de semantica, pulse la op. 4 para ver";
 					} else {
 						poper();
 						poper();
 						pilaS.push(t.tablaRA[CR[0]][CR[1]].substring(2, t.tablaRA[CR[0]][CR[1]].length()));
 						showLog += pilaS + "\n";
+						ban.continuar = false;
+						ban.error = true;
+						ban.mensajeError += "Ocurrio un error de semantica, pulse la op. 4 para ver";
 					}
 				}
 			}
@@ -162,12 +183,12 @@ public class Semantic {
 	public void pusher() {
 		Simbolo s = revdec(lexe.get(pos));
 		pilaS.push(s.tipo);
-		showLog += pilaS+ "\n";
+		showLog += pilaS + "\n";
 	}
 
 	public void poper() {
 		pilaS.pop();
-		showLog += pilaS+ "\n";
+		showLog += pilaS + "\n";
 	}
 
 	public void T() {
@@ -176,12 +197,15 @@ public class Semantic {
 		if (s != null) {
 			if (lexe.get(pos).equals("(")) {
 				E2();
-			}else {
+			} else {
 				pusher();
 				int CR[] = revisionT(t.tablaRA);
 				if (t.tablaRA[CR[0]][CR[1]].charAt(0) == '0') {
 					mensajeError += "Error Semantico en linea " + linea + ": operador invalido\n";
 					bproc = false;
+					ban.continuar = false;
+					ban.error = true;
+					ban.mensajeError += "Ocurrio un error de semantica, pulse la op. 4 para ver";
 				} else {
 					poper();
 					poper();
@@ -195,16 +219,17 @@ public class Semantic {
 	public int[] revisionT(String tabla[][]) {
 		String t = pilaS.peek();
 		int C = 0, R = 0;
-		for (int i = 0; i < tabla[0].length; i++) {                                         // COL
+		for (int i = 0; i < tabla[0].length; i++) { // COL
 			if (tabla[0][i].equals(pilaS.peek()))
-				C = i;                                                                  // ENCUENTRA LA POSICION DEL TIPO
+				C = i; // ENCUENTRA LA POSICION DEL TIPO
 		}
 		pilaS.pop();
-		for (int i = 0; i < tabla[0].length; i++) {                                         // REN
-			if (tabla[i][0].equals(pilaS.peek())) R = i;                                // ENCUENTRA LA POSICION DEL TIPO
+		for (int i = 0; i < tabla[0].length; i++) { // REN
+			if (tabla[i][0].equals(pilaS.peek()))
+				R = i; // ENCUENTRA LA POSICION DEL TIPO
 		}
 		pilaS.push(t);
-		return new int[]{C, R};
+		return new int[] { C, R };
 	}
 
 	public String getMensajeError() {

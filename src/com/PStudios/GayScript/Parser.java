@@ -24,6 +24,7 @@ public class Parser {
         num_toke = t.size();
         toke.add("$");          //WE NEED TO ADD AN END OF STRING SYMBOL
         proceso();
+
     }
 
     public void next(int C) {
@@ -40,9 +41,9 @@ public class Parser {
             showLog += "Desplaza " + toke.get(0) + " con estado I" + estado_actual + "\n";
             //ASIGNACIONES
             if (table_funciones[estado_actual + 1][C].equals("30") ||
-                table_funciones[estado_actual + 1][C].equals("19") ||
-                table_funciones[estado_actual + 1][C].equals("18") ||
-                table_funciones[estado_actual + 1][C].equals("15") ){
+                    table_funciones[estado_actual + 1][C].equals("19") ||
+                    table_funciones[estado_actual + 1][C].equals("18") ||
+                    table_funciones[estado_actual + 1][C].equals("15") ){
                 int e = Integer.parseInt(table_funciones[estado_actual + 1][C]);
                 try {
                     semantic.ASemantico(pos, nlinea,e);

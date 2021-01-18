@@ -30,6 +30,8 @@ public class Main {
         tokens += lexer.toke;
         Semantic semantic = new Semantic(lexer.lexe, tablaSimbolos);
         Parser parser = new Parser(lexer.toke, lexer.lexe, tablaSimbolos, semantic);
+        CodObj CO = new CodObj(lexer.lexe, tablaSimbolos);
+        if (parser.getMensajeError().equals("") && semantic.getMensajeError().equals("") && lexer.getMensajeError().equals("")) CO.concatenar();
 
         int op = 0;
         while (op != 5){
