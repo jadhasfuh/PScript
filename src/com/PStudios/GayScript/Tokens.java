@@ -5,7 +5,8 @@ import java.util.regex.Pattern;
 
 public enum Tokens {
     idp("idp"),
-	ident("@[_]?[A-Z|a-z|0-9]+"),
+    ident("@_*[a-zA-Z][_a-zA-Z0-9]*\\b"),
+	//ident("@[_]?[A-Z|a-z|0-9]+[^ ]$"),
     ent("ent"),
     dec("dec"),
     cart("cart"),

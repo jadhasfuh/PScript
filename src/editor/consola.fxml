@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.fxmisc.richtext.CodeArea?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" 
+            prefWidth="640.0" xmlns="http://javafx.com/javafx/8" 
+            xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="editor.EditorController">
+    
+    <top>
+        <MenuBar fx:id="Menu" style="-fx-background-color: #436475;" BorderPane.alignment="CENTER">
+            <menus>
+           
+                <Menu text="Opciones">
+                    <items>
+                        <MenuItem onAction="#onGConsol" text="Guardar Como ..." />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+   
+    <bottom>
+        <HBox fx:id="Bottom" alignment="TOP_CENTER" prefHeight="48.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+        </HBox>
+    </bottom>
+   
+    <center>
+        <CodeArea fx:id="consolArea" BorderPane.alignment="CENTER" prefHeight="290.0" prefWidth="600.0"/>
+    </center>
+   
+</BorderPane>

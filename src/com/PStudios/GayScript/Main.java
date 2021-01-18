@@ -4,17 +4,20 @@ import java.util.Scanner;
 
 public class Main {
 
-    static String cadena1 = "programa idp inicio \n " +
-                            "ent @c , @j ;\n " +
-                            "dec @t , @y ,@res , @slo;\n " +
-                            "lec ( @t ) ; @c = @y + @c ; \n" +
-                            " si @t > @j \n" +
-                                " inicio imp ( 34 ) ; \n" +
-                                " imp ( @t ) ; \n" +
-                            "sino \n" +
-                            "  @res = @res - @res * @c ; \n" +
-                             " imp ( @res ) ; \n " +
-                            "endif \n fin";
+    static String cadena1 = "programa idp inicio " +
+                            "ent @c,@j;" +
+                            "dec @t,@y,@res,@slo;" +
+                            "lec(@t);" +
+                            "@c=@y+@c;" +
+                            "si @t>@j \n" +
+                                "inicio" +
+                                "imp(34);" +
+                                "imp(@t);" +
+                            "sino" +
+                                "@res=@res-@res*@c;" +
+                                "imp(@res);" +
+                            "endif" +
+                            "fin";
 
     String tokens = "Analisis Lexico\n";
     Scanner po = new Scanner(System.in);

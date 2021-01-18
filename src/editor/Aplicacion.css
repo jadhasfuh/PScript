@@ -1,0 +1,33 @@
+.root {
+    -fx-font-size: 14pt;
+    -fx-background-color: #212F3C;
+}
+
+#areaTrabajo{
+    -fx-background: #212F3C;
+    -fx-text-fill: #004444;
+}
+
+#Menu{
+    -fx-text-fill: #212F3C;
+}
+
+#Bottom{
+    -fx-background-color: #436475; 
+    -fx-text-fill: #AADDDD;
+}
+
+#pLineas{
+    -fx-background-color: #436475; 
+    -fx-text-fill: #000000;
+}
+
+#pLineas .scroll-bar:vertical {
+    -fx-pref-width: 1;
+    -fx-opacity: 0;
+}
+
+#pLineas .scroll-bar:horizontal {
+    -fx-pref-height: 1;
+    -fx-opacity: 0;
+}

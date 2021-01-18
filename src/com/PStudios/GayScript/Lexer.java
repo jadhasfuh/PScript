@@ -15,8 +15,8 @@ public class Lexer {
     int pos = 0;
     String[] lineas;
     String tipo = "";
-    ArrayList<String> toke = new ArrayList<String>();                                   //TOKEN NAMES
-    ArrayList<String> lexe = new ArrayList<String>();                                   //ORIGINAL SYMBOLS
+    public ArrayList<String> toke = new ArrayList<String>();                                   //TOKEN NAMES
+    public ArrayList<String> lexe = new ArrayList<String>();                                   //ORIGINAL SYMBOLS
     TablaSimbolos tablaSimbolos;
 
     public Lexer(String filePath, TablaSimbolos tabla) {
