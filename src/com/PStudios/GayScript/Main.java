@@ -8,13 +8,13 @@ public class Main {
                             "ent @c,@j;" +
                             "dec @t,@y,@res,@slo;" +
                             "lec(@t);" +
-                            "@c=@y+@c-@j;" +
+                            "@c=@y+@c-@j+@c;" +
                             "si @t>@j \n" +
                                 "inicio" +
                                 "imp(34);" +
                                 "imp(@t);" +
                             "sino" +
-                                "@res=@res-(@res*@c)+(@c*@c);" +
+                                "@res=(@res-(@y*@c))+@c*(@c+@y);" +
                                 "imp(@res);" +
                             "endif" +
                             "fin";
@@ -35,7 +35,7 @@ public class Main {
         CodObj CO = new CodObj(lexer.lexe, tablaSimbolos);
         Parser parser = new Parser(lexer.toke, lexer.lexe, tablaSimbolos, semantic, CO);
         //if (parser.getMensajeError().equals("") && semantic.getMensajeError().equals("") && lexer.getMensajeError().equals("")) CO.concatenar();
-
+        parser.getCFile();
         int op = 0;
         while (op != 5){
             System.out.println("Fin de proceso. \n1)Ver Analisis Lexico\n2)Ver Analisis Sintactico \n3)Tabla de jerarquia \n4)Tabla semantica\n5)Salir");

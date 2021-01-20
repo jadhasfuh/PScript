@@ -16,12 +16,21 @@ public class Parser {
     String[][] table_funciones = t.tablaPSFX;
     String[][] table_produccin = t.lautil3;
     CodObj CO;
-    String CFile = "";
+    String CFile;
 
     public Parser(ArrayList<String> t, ArrayList<String> l, TablaSimbolos ts, Semantic s, CodObj co){
         toke = t;
         lexe = l;
         tablaSimbolos = ts;
+        CFile = "/******************************************************************************\n" +
+                "\n" +
+                "               Código generado automaticamente.\n" +
+                "                    PSCript Compiler 2021 by\n" +
+                "                      Ceja Renteria Adrian   \n" +
+                "                     Ixta Zamudio Luis Jose   \n" +
+                "                  Mendiola Correa Cesar Paulino   \n" +
+                "\n" +
+                "*******************************************************************************/\n";
         semantic = s;
         num_toke = t.size();
         toke.add("$");          //WE NEED TO ADD AN END OF STRING SYMBOL
@@ -29,10 +38,9 @@ public class Parser {
         CO = co;
     }
 
-    public void sentencia(int p){
-        boolean bproc = true, bpre = false;
-        String ST = "";
-        String asignacion = "";
+    public String sentencia(int p){
+        boolean bproc = true;
+        String asignacion = "", ST = "";
         asignacion += lexe.get(p-1)+" = ";
         p++;
         Stack<String> pilaE = new Stack<>();
@@ -44,8 +52,10 @@ public class Parser {
                 case "+":
                 case "-":
                     if (!pilaE.isEmpty()){
-                        expre.push(pilaE.peek());
-                        pilaE.pop();
+                        if (pilaE.peek().equals("+") || pilaE.peek().equals("-") || pilaE.peek().equals("*") || pilaE.peek().equals("/")){
+                            expre.push(pilaE.peek());
+                            pilaE.pop();
+                        }
                     }
                     pilaE.push(lexe.get(p));
                     break;
@@ -78,159 +88,127 @@ public class Parser {
             p++;
         }
         //PROCEDEMOS A GENERAR CADENA
-        int tp = 0,nvar = 0;
+        int nvar = 0;
+        pilaE.clear();
         String tip = "";
-        while (!expre.isEmpty()){
-            if (expre.size()-1 > tp) {
-                if (expre.get(tp).equals("+") || expre.get(tp).equals("-") || expre.get(tp).equals("*") || expre.get(tp).equals("/")) {
-                    if (nvar == 0 || expre.get(tp).equals("*") || expre.get(tp).equals("/")) {
-                        s = (Simbolo) tablaSimbolos.buscar(expre.get(tp - 2));
-                        if (s.tipo.equals("caracter")) tip = "char";
-                        if (s.tipo.equals("entero")) tip = "int";
-                        if (s.tipo.equals("decimal")) tip = "float";
-                        nvar++;
-                        ST += tip + " var" + nvar + " = " + expre.get(tp - 2) + ";\n";
-                        s = tablaSimbolos.buscar(expre.get(tp - 1));
-                        if (s.tipo.equals("caracter")) tip = "char";
-                        if (s.tipo.equals("entero")) tip = "int";
-                        if (s.tipo.equals("decimal")) tip = "float";
-                        nvar++;
-                        ST += tip + " var" + nvar + " = " + expre.get(tp - 1) + ";\n";
-                    } else if (expre.get(tp).equals("+") || expre.get(tp).equals("-")) {
-                        if (s.tipo.equals("caracter")) tip = "char";
-                        if (s.tipo.equals("entero")) tip = "int";
-                        if (s.tipo.equals("decimal")) tip = "float";
-                        nvar++;
-                        ST += tip + " var" + nvar + " = " + expre.get(tp - 1) + ";\n";
-                    }
-                    if (!bpre)
-                        ST += "var" + (nvar - 1) + "=" + "var" + (nvar - 1) + expre.get(tp) + "var" + (nvar) + ";\n";
-                    else ST += expre.get(tp - 2) + "=" + expre.get(tp - 2) + expre.get(tp) + "var" + (nvar) + ";\n";
-                    if (tp + 1 < expre.size()) {
-                        if (expre.get(tp + 1).equals("*") || expre.get(tp + 1).equals("/") || expre.get(tp + 1).equals("+") || expre.get(tp + 1).equals("-")) {
-                            if (!expre.isEmpty()) expre.remove(tp);
-                            if (!expre.isEmpty()) expre.remove(tp - 1);
-                            if (!expre.isEmpty()) expre.remove(tp - 2);
-                            expre.insertElementAt("var" + (nvar - 1), tp - 3);
-                        } else {
-                            expre.insertElementAt("var" + (nvar - 1), tp + 1);
-                            if (!expre.isEmpty()) expre.remove(tp);
-                            if (!expre.isEmpty()) expre.remove(tp - 1);
-                            if (!expre.isEmpty()) expre.remove(tp - 2);
-                        }
-                    } else {
-                        if (!expre.isEmpty()) expre.remove(tp);
-                        if (!expre.isEmpty()) expre.remove(tp - 1);
-                        if (!expre.isEmpty()) expre.remove(tp - 2);
-                        expre.insertElementAt("var" + (nvar - 1), tp - 3);
-                    }
-                    tp -= 2;
-                    bpre = true;
+        while (!expre.isEmpty()) {
+                if (expre.get(0).equals("+") || expre.get(0).equals("-") || expre.get(0).equals("*") || expre.get(0).equals("/")) {
+                    ST += pilaE.get(pilaE.size()-2) + " = " + pilaE.get(pilaE.size()-2) + expre.get(0) + pilaE.get(pilaE.size()-1) + ";\n";
+                    String res = pilaE.get(pilaE.size()-2);
+                    pilaE.pop();
+                    pilaE.pop();
+                    expre.remove(0);
+                    pilaE.push(res);
                     nvar--;
-                } else {
-                    tp++;
+                }else{
+                    s = (Simbolo) tablaSimbolos.buscar(expre.get(0));
+                    if (s.tipo.equals("cart")) tip = "char";
+                    if (s.tipo.equals("entero")) tip = "int";
+                    if (s.tipo.equals("decimal")) tip = "float";
+                    nvar++;
+                    ST += tip + " var" + nvar + " = " + expre.get(0) + ";\n";
+                    pilaE.push("var" + nvar );
+                    expre.remove(0);
                 }
-            }else break;
         }
-        asignacion += "var"+(nvar)+";\n";
+        asignacion += "var1" + ";\n";
         ST += asignacion;
-        System.out.println(ST);
+        return ST;
     }
 
-    public void reservado() {
+    public String reservado() {
+        String ST = "";
         boolean lban = false, iban = false, sban = false;
         for (int i = 0; i < lexe.size(); i++) {
             if (lexe.get(i).equals("si")) sban = true;
-            if (Character.isDigit(lexe.get(i).charAt(0))) {
-                Simbolo s = (Simbolo) tablaSimbolos.buscar(lexe.get(i));
-                CFile += "\"%d\\n\"," + Integer.parseInt(s.tipo);
-            } else {
+
                 switch (lexe.get(i)) {
                     case "programa":
-                        CFile += "\n#include <stdio.h>";
+                        ST += "\n#include <stdio.h>";
                         break;
                     case "idp":
-                        CFile += "\nint main ()";
+                        ST += "\nint main ()";
                         break;
                     case "inicio":
                         if (sban) {
-                            CFile += ") {\n";
+                            ST += ") {\n";
                             sban = false;
                         } else {
-                            CFile += " {\n";
+                            ST += " {\n";
                         }
                         break;
                     case "ent":
-                        CFile += "int ";
+                        ST += "int ";
                         break;
                     case "dec":
-                        CFile += "float ";
+                        ST += "float ";
                         break;
                     case "cart":
-                        CFile += "char ";
+                        ST += "char ";
                         break;
                     case "fin":
-                        CFile += "return 0; \n}";
+                        ST += "return 0; \n}";
                         break;
                     case "endif":
-                        CFile += "} \n";
+                        ST += "} \n";
                         break;
                     case ",":
-                        CFile += ", ";
+                        ST += ", ";
                         break;
                     case ";":
-                        CFile += "; \n";
+                        ST += "; \n";
                         break;
                     case "(":
-                        CFile += "(";
+                        ST += "(";
                         break;
                     case ")":
-                        CFile += ")";
+                        ST += ")";
                         break;
                     case "=":
-                        CFile += "=";
+                        ST += "=";
                         break;
                     case "+":
-                        CFile += "+";
+                        ST += "+";
                         break;
                     case "-":
-                        CFile += "-";
+                        ST += "-";
                         break;
                     case "*":
-                        CFile += "*";
+                        ST += "*";
                         break;
                     case "/":
-                        CFile += "/";
+                        ST += "/";
                         break;
                     case "<":
-                        CFile += "<";
+                        ST += "<";
                         break;
                     case ">":
-                        CFile += ">";
+                        ST += ">";
                         break;
                     case "<=":
-                        CFile += "<=";
+                        ST += "<=";
                         break;
                     case ">=":
-                        CFile += ">=";
+                        ST += ">=";
                         break;
                     case "si":
-                        CFile += "if (";
+                        ST += "if (";
                         break;
                     case "imp":
-                        CFile += "printf";
+                        ST += "printf";
                         break;
                     case "sino":
-                        CFile += "} else { \n";
+                        ST += "} else { \n";
                         break;
                     case "lec":
-                        CFile += "scanf";
+                        ST += "scanf";
                         break;
                     default:
                         break;
-                }
+
             }
         }
+        return ST;
     }
 
     public void next(int C) {
@@ -252,8 +230,9 @@ public class Parser {
                     table_funciones[estado_actual + 1][C].equals("15") ){
                 int e = Integer.parseInt(table_funciones[estado_actual + 1][C]);
                 try {
-                    if (e == 30) sentencia(pos);
                     semantic.ASemantico(pos, nlinea,e);
+                    if (e == 30) CFile += sentencia(pos);
+                    //else CFile += reservado();
                 }catch (Exception e1){}
             }
             desplaza(C);                                                                // DEACUERDO A LO ENCONTRADO
@@ -311,5 +290,6 @@ public class Parser {
 
     public String getMensajeError() { return mensajeError; }
     public String getLog() { return showLog; }
+    public String getCFile() { return CFile; }
 
 }

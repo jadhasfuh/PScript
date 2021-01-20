@@ -26,6 +26,7 @@ public class Semantic {
 		pilaS = new Stack<String>();
 		// ASIGNACIONES
 		if (es == 30) {
+			int pt = pos; //PARA ASIGNACION DIRECTA
 			Simbolo s = revdec(lexe.get(pos - 1));
 			pilaS.push(s.tipo);
 			showLog += pilaS + "\n";
@@ -35,7 +36,7 @@ public class Semantic {
 			else
 				pusher();
 			loop();
-			finseg();
+			if (pos-pt>1) finseg();
 			pilaS.clear();
 			showLog += pilaS + "\n";
 			// COMPARACIONES

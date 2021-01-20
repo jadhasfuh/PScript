@@ -56,14 +56,26 @@ public class Lexer {
                     if ((currentToken()+"").equals("ent")) tipo = "entero";
                     else if ((currentToken()+"").equals("dec")) tipo = "decimal";
                     else if ((currentToken()+"").equals("cart")) tipo = "caracter";
+                    else if (Character.isDigit((lexe.get(lexe.size()-1)).charAt(0))) {
+                        if (lexe.get(lexe.size()-1).contains(".")) tipo = "decimal";
+                        else tipo = "entero";
+                    }else if (currentToken().equals("cart")) tipo = "caracter";
                     else if (!(currentToken()+"").equals("ident") && !(currentToken()+"").equals("comma")) tipo = "";
-                    if ((currentToken()+"").equals("ident")) {
+                    if ((currentToken()+"").equals("ident") ) {
                         if (tablaSimbolos.buscar(lexema) == null) {
                             if (tipo.equals(""))//SIN NADA, ERROR
                                 tablaSimbolos.insertar(pos+"", lexema, "error","");
                             else
                                 tablaSimbolos.insertar(pos+"", lexema, tipo,"");
-                        }}else{
+                        }
+                    }else if(Character.isDigit(lexe.get(lexe.size()-1).charAt(0))) {
+                        if (tablaSimbolos.buscar(lexema) == null) {
+                            if (tipo.equals(""))//SIN NADA, ERROR
+                                tablaSimbolos.insertar(pos+"", lexema, "error","");
+                            else
+                                tablaSimbolos.insertar(pos+"", lexema, tipo,lexe.get(lexe.size()-1));
+                        }
+                    }else{
                         if (tablaSimbolos.buscar(lexema) == null)
                             tablaSimbolos.insertar(pos+"", lexema, lexema,"");
                     }
