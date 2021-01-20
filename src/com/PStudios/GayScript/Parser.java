@@ -30,7 +30,7 @@ public class Parser {
     }
 
     public void sentencia(int p){
-        boolean bproc = true;
+        boolean bproc = true, bpre = false;
         String ST = "";
         String asignacion = "";
         asignacion += lexe.get(p-1)+" = ";
@@ -76,46 +76,65 @@ public class Parser {
                     expre.push(lexe.get(p));
             }
             p++;
-        }System.out.println(expre);
+        }
         //PROCEDEMOS A GENERAR CADENA
         int tp = 0,nvar = 0;
         String tip = "";
         while (!expre.isEmpty()){
-            if (expre.get(tp).equals("+") || expre.get(tp).equals("-") || expre.get(tp).equals("*") || expre.get(tp).equals("/")){
-                if (nvar == 0 || expre.get(tp).equals("*") || expre.get(tp).equals("/")){
-                    s = (Simbolo) tablaSimbolos.buscar(expre.get(tp-2));
-                    if (s.tipo.equals("caracter")) tip = "char";
-                    if (s.tipo.equals("entero")) tip = "int";
-                    if (s.tipo.equals("decimal")) tip = "float";
-                    nvar++; ST += tip+" var"+nvar+" = "+expre.get(tp-2)+";\n";
-                    s = tablaSimbolos.buscar(expre.get(tp-1));
-                    if (s.tipo.equals("caracter")) tip = "char";
-                    if (s.tipo.equals("entero")) tip = "int";
-                    if (s.tipo.equals("decimal")) tip = "float";
-                    nvar++; ST += tip+" var"+nvar+" = "+expre.get(tp-1)+";\n";
-                }else if (expre.get(tp).equals("+") || expre.get(tp).equals("-")){
-                    if (s.tipo.equals("caracter")) tip = "char";
-                    if (s.tipo.equals("entero")) tip = "int";
-                    if (s.tipo.equals("decimal")) tip = "float";
-                    nvar++; ST += tip+" var"+nvar+" = "+expre.get(tp-1)+";\n";
-                }
-                ST += "var"+(nvar-1)+"="+"var"+(nvar-1)+expre.get(tp)+"var"+(nvar)+";\n";
-                if (expre.get(tp).equals("*") || expre.get(tp).equals("-")){
-                    if (!expre.isEmpty()) expre.remove(tp);
-                    if (!expre.isEmpty()) expre.remove(tp - 1);
+            if (expre.size()-1 > tp) {
+                if (expre.get(tp).equals("+") || expre.get(tp).equals("-") || expre.get(tp).equals("*") || expre.get(tp).equals("/")) {
+                    if (nvar == 0 || expre.get(tp).equals("*") || expre.get(tp).equals("/")) {
+                        s = (Simbolo) tablaSimbolos.buscar(expre.get(tp - 2));
+                        if (s.tipo.equals("caracter")) tip = "char";
+                        if (s.tipo.equals("entero")) tip = "int";
+                        if (s.tipo.equals("decimal")) tip = "float";
+                        nvar++;
+                        ST += tip + " var" + nvar + " = " + expre.get(tp - 2) + ";\n";
+                        s = tablaSimbolos.buscar(expre.get(tp - 1));
+                        if (s.tipo.equals("caracter")) tip = "char";
+                        if (s.tipo.equals("entero")) tip = "int";
+                        if (s.tipo.equals("decimal")) tip = "float";
+                        nvar++;
+                        ST += tip + " var" + nvar + " = " + expre.get(tp - 1) + ";\n";
+                    } else if (expre.get(tp).equals("+") || expre.get(tp).equals("-")) {
+                        if (s.tipo.equals("caracter")) tip = "char";
+                        if (s.tipo.equals("entero")) tip = "int";
+                        if (s.tipo.equals("decimal")) tip = "float";
+                        nvar++;
+                        ST += tip + " var" + nvar + " = " + expre.get(tp - 1) + ";\n";
+                    }
+                    if (!bpre)
+                        ST += "var" + (nvar - 1) + "=" + "var" + (nvar - 1) + expre.get(tp) + "var" + (nvar) + ";\n";
+                    else ST += expre.get(tp - 2) + "=" + expre.get(tp - 2) + expre.get(tp) + "var" + (nvar) + ";\n";
+                    if (tp + 1 < expre.size()) {
+                        if (expre.get(tp + 1).equals("*") || expre.get(tp + 1).equals("/") || expre.get(tp + 1).equals("+") || expre.get(tp + 1).equals("-")) {
+                            if (!expre.isEmpty()) expre.remove(tp);
+                            if (!expre.isEmpty()) expre.remove(tp - 1);
+                            if (!expre.isEmpty()) expre.remove(tp - 2);
+                            expre.insertElementAt("var" + (nvar - 1), tp - 3);
+                        } else {
+                            expre.insertElementAt("var" + (nvar - 1), tp + 1);
+                            if (!expre.isEmpty()) expre.remove(tp);
+                            if (!expre.isEmpty()) expre.remove(tp - 1);
+                            if (!expre.isEmpty()) expre.remove(tp - 2);
+                        }
+                    } else {
+                        if (!expre.isEmpty()) expre.remove(tp);
+                        if (!expre.isEmpty()) expre.remove(tp - 1);
+                        if (!expre.isEmpty()) expre.remove(tp - 2);
+                        expre.insertElementAt("var" + (nvar - 1), tp - 3);
+                    }
                     tp -= 2;
-                }else {
-                    if (!expre.isEmpty()) expre.remove(tp);
-                    tp -= 1;
+                    bpre = true;
+                    nvar--;
+                } else {
+                    tp++;
                 }
-                nvar--;
-            }else {
-                tp ++;
-            }
+            }else break;
         }
-        asignacion = asignacion += "var"+(nvar)+";\n";
+        asignacion += "var"+(nvar)+";\n";
         ST += asignacion;
-        System.out.println(asignacion);
+        System.out.println(ST);
     }
 
     public void reservado() {
