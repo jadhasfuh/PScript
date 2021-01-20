@@ -4,10 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Optional;
 
-import com.PStudios.GayScript.Lexer;
-import com.PStudios.GayScript.Parser;
-import com.PStudios.GayScript.Semantic;
-import com.PStudios.GayScript.TablaSimbolos;
+import com.PStudios.GayScript.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
@@ -29,12 +26,13 @@ public class EditorController {
     Semantic semantic;
     Lexer lexer;
     Parser parser;
+    CodObj cob;
 
     public void compi() {
         lexer = new Lexer(codeArea.getText(), tablaSimbolos);
         System.out.println(lexer.lexe);
         System.out.println(lexer.toke);
-        parser = new Parser(lexer.toke, lexer.lexe, tablaSimbolos, semantic);
+        parser = new Parser(lexer.toke, lexer.lexe, tablaSimbolos, semantic, cob);
         System.out.println(lexer.lexe);
         System.out.println(lexer.toke);
         semantic = new Semantic(lexer.lexe, tablaSimbolos);

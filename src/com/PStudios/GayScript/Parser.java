@@ -15,8 +15,10 @@ public class Parser {
     TablaSimbolos tablaSimbolos;
     String[][] table_funciones = t.tablaPSFX;
     String[][] table_produccin = t.lautil3;
+    CodObj CO;
+    String CFile = "";
 
-    public Parser(ArrayList<String> t, ArrayList<String> l, TablaSimbolos ts, Semantic s){
+    public Parser(ArrayList<String> t, ArrayList<String> l, TablaSimbolos ts, Semantic s, CodObj co){
         toke = t;
         lexe = l;
         tablaSimbolos = ts;
@@ -24,7 +26,192 @@ public class Parser {
         num_toke = t.size();
         toke.add("$");          //WE NEED TO ADD AN END OF STRING SYMBOL
         proceso();
+        CO = co;
+    }
 
+    public void sentencia(int p){
+        boolean bproc = true;
+        String ST = "";
+        String asignacion = "";
+        asignacion += lexe.get(p-1)+" = ";
+        p++;
+        Stack<String> pilaE = new Stack<>();
+        Stack<String> expre = new Stack<>();
+        Simbolo s = (Simbolo) tablaSimbolos.buscar(lexe.get(p));
+        //ACOMODAMOS A POSFIJO
+        while (bproc){
+            switch (lexe.get(p)) {
+                case "+":
+                case "-":
+                    if (!pilaE.isEmpty()){
+                        expre.push(pilaE.peek());
+                        pilaE.pop();
+                    }
+                    pilaE.push(lexe.get(p));
+                    break;
+                case "*":
+                case "/":
+                    pilaE.push(lexe.get(p));
+                    break;
+                case "(":
+                    pilaE.push(lexe.get(p));
+                    break;
+                case ")":
+                    while (!pilaE.peek().equals("(")) {
+                        expre.push(pilaE.peek());
+                        pilaE.pop();
+                    }
+                    if (pilaE.peek().equals("(")){
+                        pilaE.pop();
+                    }
+                    break;
+                case ";":
+                    while (!pilaE.isEmpty()) {
+                        expre.push(pilaE.peek());
+                        pilaE.pop();
+                    }
+                    bproc = false;
+                    break;
+                default:
+                    expre.push(lexe.get(p));
+            }
+            p++;
+        }System.out.println(expre);
+        //PROCEDEMOS A GENERAR CADENA
+        int tp = 0,nvar = 0;
+        String tip = "";
+        while (!expre.isEmpty()){
+            if (expre.get(tp).equals("+") || expre.get(tp).equals("-") || expre.get(tp).equals("*") || expre.get(tp).equals("/")){
+                if (nvar == 0 || expre.get(tp).equals("*") || expre.get(tp).equals("/")){
+                    s = (Simbolo) tablaSimbolos.buscar(expre.get(tp-2));
+                    if (s.tipo.equals("caracter")) tip = "char";
+                    if (s.tipo.equals("entero")) tip = "int";
+                    if (s.tipo.equals("decimal")) tip = "float";
+                    nvar++; ST += tip+" var"+nvar+" = "+expre.get(tp-2)+";\n";
+                    s = tablaSimbolos.buscar(expre.get(tp-1));
+                    if (s.tipo.equals("caracter")) tip = "char";
+                    if (s.tipo.equals("entero")) tip = "int";
+                    if (s.tipo.equals("decimal")) tip = "float";
+                    nvar++; ST += tip+" var"+nvar+" = "+expre.get(tp-1)+";\n";
+                }else if (expre.get(tp).equals("+") || expre.get(tp).equals("-")){
+                    if (s.tipo.equals("caracter")) tip = "char";
+                    if (s.tipo.equals("entero")) tip = "int";
+                    if (s.tipo.equals("decimal")) tip = "float";
+                    nvar++; ST += tip+" var"+nvar+" = "+expre.get(tp-1)+";\n";
+                }
+                ST += "var"+(nvar-1)+"="+"var"+(nvar-1)+expre.get(tp)+"var"+(nvar)+";\n";
+                if (expre.get(tp).equals("*") || expre.get(tp).equals("-")){
+                    if (!expre.isEmpty()) expre.remove(tp);
+                    if (!expre.isEmpty()) expre.remove(tp - 1);
+                    tp -= 2;
+                }else {
+                    if (!expre.isEmpty()) expre.remove(tp);
+                    tp -= 1;
+                }
+                nvar--;
+            }else {
+                tp ++;
+            }
+        }
+        asignacion = asignacion += "var"+(nvar)+";\n";
+        ST += asignacion;
+        System.out.println(asignacion);
+    }
+
+    public void reservado() {
+        boolean lban = false, iban = false, sban = false;
+        for (int i = 0; i < lexe.size(); i++) {
+            if (lexe.get(i).equals("si")) sban = true;
+            if (Character.isDigit(lexe.get(i).charAt(0))) {
+                Simbolo s = (Simbolo) tablaSimbolos.buscar(lexe.get(i));
+                CFile += "\"%d\\n\"," + Integer.parseInt(s.tipo);
+            } else {
+                switch (lexe.get(i)) {
+                    case "programa":
+                        CFile += "\n#include <stdio.h>";
+                        break;
+                    case "idp":
+                        CFile += "\nint main ()";
+                        break;
+                    case "inicio":
+                        if (sban) {
+                            CFile += ") {\n";
+                            sban = false;
+                        } else {
+                            CFile += " {\n";
+                        }
+                        break;
+                    case "ent":
+                        CFile += "int ";
+                        break;
+                    case "dec":
+                        CFile += "float ";
+                        break;
+                    case "cart":
+                        CFile += "char ";
+                        break;
+                    case "fin":
+                        CFile += "return 0; \n}";
+                        break;
+                    case "endif":
+                        CFile += "} \n";
+                        break;
+                    case ",":
+                        CFile += ", ";
+                        break;
+                    case ";":
+                        CFile += "; \n";
+                        break;
+                    case "(":
+                        CFile += "(";
+                        break;
+                    case ")":
+                        CFile += ")";
+                        break;
+                    case "=":
+                        CFile += "=";
+                        break;
+                    case "+":
+                        CFile += "+";
+                        break;
+                    case "-":
+                        CFile += "-";
+                        break;
+                    case "*":
+                        CFile += "*";
+                        break;
+                    case "/":
+                        CFile += "/";
+                        break;
+                    case "<":
+                        CFile += "<";
+                        break;
+                    case ">":
+                        CFile += ">";
+                        break;
+                    case "<=":
+                        CFile += "<=";
+                        break;
+                    case ">=":
+                        CFile += ">=";
+                        break;
+                    case "si":
+                        CFile += "if (";
+                        break;
+                    case "imp":
+                        CFile += "printf";
+                        break;
+                    case "sino":
+                        CFile += "} else { \n";
+                        break;
+                    case "lec":
+                        CFile += "scanf";
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
     }
 
     public void next(int C) {
@@ -46,6 +233,7 @@ public class Parser {
                     table_funciones[estado_actual + 1][C].equals("15") ){
                 int e = Integer.parseInt(table_funciones[estado_actual + 1][C]);
                 try {
+                    if (e == 30) sentencia(pos);
                     semantic.ASemantico(pos, nlinea,e);
                 }catch (Exception e1){}
             }

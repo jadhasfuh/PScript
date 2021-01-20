@@ -8,13 +8,13 @@ public class Main {
                             "ent @c,@j;" +
                             "dec @t,@y,@res,@slo;" +
                             "lec(@t);" +
-                            "@c=@y+@c;" +
+                            "@c=@y+@c-@j;" +
                             "si @t>@j \n" +
                                 "inicio" +
                                 "imp(34);" +
                                 "imp(@t);" +
                             "sino" +
-                                "@res=@res-@res*@c;" +
+                                "@res=@res-(@res*@c)+(@c*@c);" +
                                 "imp(@res);" +
                             "endif" +
                             "fin";
@@ -32,9 +32,9 @@ public class Main {
         Lexer lexer = new Lexer(cad,tablaSimbolos);
         tokens += lexer.toke;
         Semantic semantic = new Semantic(lexer.lexe, tablaSimbolos);
-        Parser parser = new Parser(lexer.toke, lexer.lexe, tablaSimbolos, semantic);
         CodObj CO = new CodObj(lexer.lexe, tablaSimbolos);
-        if (parser.getMensajeError().equals("") && semantic.getMensajeError().equals("") && lexer.getMensajeError().equals("")) CO.concatenar();
+        Parser parser = new Parser(lexer.toke, lexer.lexe, tablaSimbolos, semantic, CO);
+        //if (parser.getMensajeError().equals("") && semantic.getMensajeError().equals("") && lexer.getMensajeError().equals("")) CO.concatenar();
 
         int op = 0;
         while (op != 5){
