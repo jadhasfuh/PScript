@@ -32,10 +32,9 @@ public class Main {
         Lexer lexer = new Lexer(cad,tablaSimbolos);
         tokens += lexer.toke;
         Semantic semantic = new Semantic(lexer.lexe, tablaSimbolos);
-        CodObj CO = new CodObj(lexer.lexe, tablaSimbolos);
-        Parser parser = new Parser(lexer.toke, lexer.lexe, tablaSimbolos, semantic, CO);
+        Parser parser = new Parser(lexer.toke, lexer.lexe, tablaSimbolos, semantic);
         //if (parser.getMensajeError().equals("") && semantic.getMensajeError().equals("") && lexer.getMensajeError().equals("")) CO.concatenar();
-        parser.getCFile();
+        System.out.println(parser.getCFile());
         int op = 0;
         while (op != 5){
             System.out.println("Fin de proceso. \n1)Ver Analisis Lexico\n2)Ver Analisis Sintactico \n3)Tabla de jerarquia \n4)Tabla semantica\n5)Salir");

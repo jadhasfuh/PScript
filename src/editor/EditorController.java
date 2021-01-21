@@ -26,13 +26,12 @@ public class EditorController {
     Semantic semantic;
     Lexer lexer;
     Parser parser;
-    CodObj cob;
 
     public void compi() {
         lexer = new Lexer(codeArea.getText(), tablaSimbolos);
         System.out.println(lexer.lexe);
         System.out.println(lexer.toke);
-        parser = new Parser(lexer.toke, lexer.lexe, tablaSimbolos, semantic, cob);
+        parser = new Parser(lexer.toke, lexer.lexe, tablaSimbolos, semantic);
         System.out.println(lexer.lexe);
         System.out.println(lexer.toke);
         semantic = new Semantic(lexer.lexe, tablaSimbolos);

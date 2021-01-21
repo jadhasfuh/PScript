@@ -5,7 +5,7 @@ import java.util.Stack;
 
 public class Parser {
 
-    boolean continuar = true, error = false;
+    boolean continuar = true, error = false, bangen = false;
     int nlinea = 1,estado_actual = 0, pos = 0, num_toke = 0;
     Stack<String> pila = new Stack<String>();
     String mensajeError = "", showLog = "Analisis Sintactico\n";
@@ -15,10 +15,9 @@ public class Parser {
     TablaSimbolos tablaSimbolos;
     String[][] table_funciones = t.tablaPSFX;
     String[][] table_produccin = t.lautil3;
-    CodObj CO;
     String CFile;
 
-    public Parser(ArrayList<String> t, ArrayList<String> l, TablaSimbolos ts, Semantic s, CodObj co){
+    public Parser(ArrayList<String> t, ArrayList<String> l, TablaSimbolos ts, Semantic s){
         toke = t;
         lexe = l;
         tablaSimbolos = ts;
@@ -35,7 +34,6 @@ public class Parser {
         num_toke = t.size();
         toke.add("$");          //WE NEED TO ADD AN END OF STRING SYMBOL
         proceso();
-        CO = co;
     }
 
     public String sentencia(int p){
@@ -106,12 +104,15 @@ public class Parser {
                     if (s.tipo.equals("entero")) tip = "int";
                     if (s.tipo.equals("decimal")) tip = "float";
                     nvar++;
-                    ST += tip + " var" + nvar + " = " + expre.get(0) + ";\n";
+                    if (!ST.contains("var"+nvar))
+                        ST += tip + " var" + nvar + " = " + expre.get(0) + ";\n";
+                    else
+                        ST += "var" + nvar + " = " + expre.get(0) + ";\n";
                     pilaE.push("var" + nvar );
                     expre.remove(0);
                 }
         }
-        asignacion += "var1" + ";\n";
+        asignacion += "var1";
         ST += asignacion;
         return ST;
     }
@@ -119,93 +120,104 @@ public class Parser {
     public String reservado() {
         String ST = "";
         boolean lban = false, iban = false, sban = false;
-        for (int i = 0; i < lexe.size(); i++) {
-            if (lexe.get(i).equals("si")) sban = true;
-
-                switch (lexe.get(i)) {
-                    case "programa":
-                        ST += "\n#include <stdio.h>";
-                        break;
-                    case "idp":
-                        ST += "\nint main ()";
-                        break;
-                    case "inicio":
-                        if (sban) {
-                            ST += ") {\n";
-                            sban = false;
-                        } else {
-                            ST += " {\n";
-                        }
-                        break;
-                    case "ent":
-                        ST += "int ";
-                        break;
-                    case "dec":
-                        ST += "float ";
-                        break;
-                    case "cart":
-                        ST += "char ";
-                        break;
-                    case "fin":
-                        ST += "return 0; \n}";
-                        break;
-                    case "endif":
-                        ST += "} \n";
-                        break;
-                    case ",":
-                        ST += ", ";
-                        break;
-                    case ";":
-                        ST += "; \n";
-                        break;
-                    case "(":
-                        ST += "(";
-                        break;
-                    case ")":
-                        ST += ")";
-                        break;
-                    case "=":
-                        ST += "=";
-                        break;
-                    case "+":
-                        ST += "+";
-                        break;
-                    case "-":
-                        ST += "-";
-                        break;
-                    case "*":
-                        ST += "*";
-                        break;
-                    case "/":
-                        ST += "/";
-                        break;
-                    case "<":
-                        ST += "<";
-                        break;
-                    case ">":
-                        ST += ">";
-                        break;
-                    case "<=":
-                        ST += "<=";
-                        break;
-                    case ">=":
-                        ST += ">=";
-                        break;
-                    case "si":
-                        ST += "if (";
-                        break;
-                    case "imp":
-                        ST += "printf";
-                        break;
-                    case "sino":
-                        ST += "} else { \n";
-                        break;
-                    case "lec":
-                        ST += "scanf";
-                        break;
-                    default:
-                        break;
-
+        if (lexe.get(pos).equals("lec")) lban = true;
+        if (lexe.get(pos).equals("imp")) iban = true;
+        if (lexe.get(pos).equals("si")) sban = true;
+        if (lexe.get(pos).charAt(0) == '@') {
+            if (!lexe.get(pos+1).equals("=") && bangen == false) {
+                Simbolo s = tablaSimbolos.buscar(lexe.get(pos));
+                String td = "%";
+                if (lban) {
+                    if (s.tipo == "entero") td = "\"%d\"";
+                    else if (s.tipo == "decimal") td = "\"%f\"";
+                    else if (s.tipo == "caracter") td = "\"%c\"";
+                    ST += td + ",&" + s.nombre;
+                    lban = false;
+                } else if (iban) {
+                    if (s.tipo == "entero") td = "\"%d\\n\"";
+                    else if (s.tipo == "decimal") td = "\"%f\\n\"";
+                    else if (s.tipo == "caracter") td = "\"%c\\n\"";
+                    ST += td + "," + s.nombre;
+                    iban = false;
+                } else {
+                    ST += s.nombre;
+                }
+            }else bangen = true;
+        }else if(Character.isDigit(lexe.get(pos).charAt(0))){
+            Simbolo s = tablaSimbolos.buscar(lexe.get(pos));
+            if (s.tipo == "entero") ST += "\"%d\\n\","+s.valor;
+            else if (s.tipo == "decimal") ST += "\"%f\\n\","+s.valor;
+            else if (s.tipo == "caracter") ST += "\"%c\\n\","+s.valor;
+        }else{
+            switch (lexe.get(pos)) {
+                case "programa":
+                    ST += "\n#include <stdio.h>";
+                    break;
+                case "idp":
+                    ST += "\nint main ()";
+                    break;
+                case "inicio":
+                    if (sban) {
+                        ST += ") {\n";
+                        sban = false;
+                    }else {
+                        ST += " {\n";
+                    }
+                    break;
+                case "ent":
+                    ST += "int ";
+                    break;
+                case "dec":
+                    ST += "float ";
+                    break;
+                case "cart":
+                    ST += "char ";
+                    break;
+                case "fin":
+                    ST += "return 0; \n}";
+                    break;
+                case "endif":
+                    ST += "} \n";
+                    break;
+                case ",":
+                    ST += ", ";
+                    break;
+                case ";":
+                    bangen = false;
+                    ST += "; \n";
+                    break;
+                case "(":
+                    ST += "(";
+                    break;
+                case ")":
+                    ST += ")";
+                    break;
+                case "<":
+                    ST += "<";
+                    break;
+                case ">":
+                    ST += ">";
+                    break;
+                case "<=":
+                    ST += "<=";
+                    break;
+                case ">=":
+                    ST += ">=";
+                    break;
+                case "si":
+                    ST += "if (";
+                    break;
+                case "imp":
+                    ST += "printf";
+                    break;
+                case "sino":
+                    ST += "} else { \n";
+                    break;
+                case "lec":
+                    ST += "scanf";
+                    break;
+                default:
+                    break;
             }
         }
         return ST;
@@ -229,12 +241,12 @@ public class Parser {
                     table_funciones[estado_actual + 1][C].equals("18") ||
                     table_funciones[estado_actual + 1][C].equals("15") ){
                 int e = Integer.parseInt(table_funciones[estado_actual + 1][C]);
+                if (e == 30) CFile += sentencia(pos);
                 try {
                     semantic.ASemantico(pos, nlinea,e);
-                    if (e == 30) CFile += sentencia(pos);
-                    //else CFile += reservado();
-                }catch (Exception e1){}
+                }catch (Exception e1){System.out.println("errr");}
             }
+            CFile += reservado();
             desplaza(C);                                                                // DEACUERDO A LO ENCONTRADO
         }
     }
