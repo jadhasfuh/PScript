@@ -5,8 +5,8 @@ import java.util.Stack;
 
 public class Parser {
 
-    boolean continuar = true, error = false, bangen = false;
-    int nlinea = 1,estado_actual = 0, pos = 0, num_toke = 0, nvar = 0, nif = 1, nmientras = 1;
+    boolean continuar = true, error = false, bangen = false, belse = false;
+    int nlinea = 1,estado_actual = 0, pos = 0, num_toke = 0, nvar = 0, nif = 0, nmientras = 0, anidado = 0, last = 0;
     Stack<String> pila = new Stack<String>();
     String mensajeError = "", showLog = "Analisis Sintactico\n";
     Semantic semantic;
@@ -101,13 +101,13 @@ public class Parser {
                     if (s.tipo.equals("entero")) tip = "int";
                     if (s.tipo.equals("decimal")) tip = "float";
                     nvar++;
-                    //if (!CFile.contains("var"+nvar)) {
+                    if (!CFile.contains("var"+nvar)) {
                         if (expre.get(0).charAt(0) == '@') ST += tip + " var" + nvar + " = " + expre.get(0).substring(1, expre.get(0).length()) + ";\n";
                         else ST += tip + " var" + nvar + " = " + expre.get(0) + ";\n";
-                    //}//else{
-                    //    if (expre.get(0).charAt(0) == '@') ST += " var" + nvar + " = " + expre.get(0).substring(1,expre.get(0).length()) + ";\n";
-                    //    else ST += "var" + nvar + " = " + expre.get(0) + ";\n";
-                    //}
+                    }else{
+                        if (expre.get(0).charAt(0) == '@') ST += " var" + nvar + " = " + expre.get(0).substring(1,expre.get(0).length()) + ";\n";
+                        else ST += "var" + nvar + " = " + expre.get(0) + ";\n";
+                    }
                     pilaE.push("var" + nvar );
                     expre.remove(0);
                 }
@@ -163,7 +163,11 @@ public class Parser {
                     break;
                 case "inicio":
                     if (sban) {
-                        ST += ")) goto sino"+nif+";\n";
+                        if (nif == 0 ) nif = last;
+                        anidado++;
+                        nif++;
+                        ST += ")) goto sino"+(nif+anidado)+";\n";
+                        if ((nif + anidado) > last) last = nif+anidado;
                         sban = false;
                     }else{
                         ST += " {\n";
@@ -182,16 +186,20 @@ public class Parser {
                     ST += "return 0; \n}";
                     break;
                 case "endif":
-                    ST += "finif"+nif+":\n";
-                    nif ++;
+                    if (belse) ST += "goto finif"+(nif+anidado)+";\nsino"+(nif+anidado)+":\n";
+                    belse = false;
+                    ST += "finif"+(nif+anidado)+":\n";
+                    anidado--;
+                    nif--;
                     break;
                 case ",":
                     ST += ", ";
                     break;
                 case ";":
                     if (mban) {
-                        ST += ") goto mientras"+nmientras;
-                        nmientras++;
+                        ST += ") goto mientras"+(nmientras+anidado);
+                        anidado--;
+                        nmientras--;
                         mban = false;
                     }
                     bangen = false;
@@ -216,10 +224,15 @@ public class Parser {
                     ST += ">=";
                     break;
                 case "si":
+                    belse = true;
                     ST += "if (!(";
                     break;
                 case "hacer":
-                    ST += "mientras"+nmientras+":\n";
+                    if (nmientras == 0 ) nmientras = last;
+                    anidado++;
+                    nmientras ++;
+                    ST += "mientras"+(nmientras+anidado)+":\n";
+                    if ((nmientras + anidado) > last) last = nmientras+anidado;
                     break;
                 case "mientras":
                     ST += "if (";
@@ -229,7 +242,8 @@ public class Parser {
                     ST += "printf";
                     break;
                 case "sino":
-                    ST += "goto finif"+nif+";\nsino"+nif+":\n";
+                    belse = false;
+                    ST += "goto finif"+(nif+anidado)+";\nsino"+(nif+anidado)+":\n";
                     break;
                 case "lec":
                     ST += "scanf";

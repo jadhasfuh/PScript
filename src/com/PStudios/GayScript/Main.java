@@ -27,7 +27,7 @@ public class Main {
                                     "inicio"+
                                     "imp(@res);" +
                                 "sino"+
-                                    "imp(@res+1.5);" +
+                                    "imp(@res);" +
                                 "endif"+
                             "endif" +
                             "fin";
