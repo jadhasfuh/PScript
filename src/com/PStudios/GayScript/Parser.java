@@ -261,9 +261,9 @@ public class Parser {
                     table_funciones[estado_actual + 1][C].equals("16") ){
                 int e = Integer.parseInt(table_funciones[estado_actual + 1][C]);
                 if (e == 30) CFile += sentencia(pos);
-                try {
+                //try {
                     semantic.ASemantico(pos, nlinea,e);
-                }catch (Exception e1){System.out.println("errr");}
+               // }catch (Exception e1){System.out.println("errr");}
             }
             CFile += reservado();
             desplaza(C);                                                                // DEACUERDO A LO ENCONTRADO

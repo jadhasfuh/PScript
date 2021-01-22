@@ -7,6 +7,7 @@ public class Main {
     static String cadena1 = "programa idp inicio " +
                             "ent @c,@j;" +
                             "dec @t,@y,@res,@slo;" +
+                            "cart @cara = 's';"+
                             "hacer" +
                             "lec(@t);" +
                             "@c = @c-@c;" +
@@ -15,10 +16,18 @@ public class Main {
                             "si @t>@j \n" +
                                 "inicio" +
                                 "imp(34);" +
-                                "imp(@t);" +
+                                "si @t>@c \n"+
+                                    "inicio"+
+                                    "imp(@t);" +
+                                "endif"+
                             "sino" +
                                 "@res=(@res-(@y*@c))+@c*(@c+@y);" +
-                                "imp(@res);" +
+                                "si @t<@j \n"+
+                                    "inicio"+
+                                    "imp(@res);" +
+                                "sino"+
+                                    "imp(@res+1.5);" +
+                                "endif"+
                             "endif" +
                             "fin";
 

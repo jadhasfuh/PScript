@@ -56,24 +56,23 @@ public class Lexer {
                     if ((currentToken()+"").equals("ent")) tipo = "entero";
                     else if ((currentToken()+"").equals("dec")) tipo = "decimal";
                     else if ((currentToken()+"").equals("cart")) tipo = "caracter";
-                    else if (Character.isDigit((lexe.get(lexe.size()-1)).charAt(0))) {
-                        if (lexe.get(lexe.size()-1).contains(".")) tipo = "decimal";
-                        else tipo = "entero";
-                    }else if (currentToken().equals("cart")) tipo = "caracter";
+                    else if ((currentToken()+"").equals("icart")) tipo = "caracter";
+                    else if ((currentToken()+"").equals("idec")) tipo = "decimal";
+                    else if ((currentToken()+"").equals("num")) tipo = "entero";
                     else if (!(currentToken()+"").equals("ident") && !(currentToken()+"").equals("comma")) tipo = "";
-                    if ((currentToken()+"").equals("ident") ) {
+                    if ((currentToken()+"").equals("ident")) {
                         if (tablaSimbolos.buscar(lexema) == null) {
                             if (tipo.equals(""))//SIN NADA, ERROR
                                 tablaSimbolos.insertar(pos+"", lexema, "error","");
                             else
                                 tablaSimbolos.insertar(pos+"", lexema, tipo,"");
                         }
-                    }else if(Character.isDigit(lexe.get(lexe.size()-1).charAt(0))) {
+                    }else if((currentToken()+"").equals("num") || (currentToken()+"").equals("idec") || (currentToken()+"").equals("icart") ) {
                         if (tablaSimbolos.buscar(lexema) == null) {
                             if (tipo.equals(""))//SIN NADA, ERROR
                                 tablaSimbolos.insertar(pos+"", lexema, "error","");
                             else
-                                tablaSimbolos.insertar(pos+"", lexema, tipo,lexe.get(lexe.size()-1));
+                                tablaSimbolos.insertar(pos+"", lexema, tipo,lexema);
                         }
                     }else{
                         if (tablaSimbolos.buscar(lexema) == null)
