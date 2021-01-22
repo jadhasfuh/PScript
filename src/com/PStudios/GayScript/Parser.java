@@ -85,7 +85,7 @@ public class Parser {
         }
         //PROCEDEMOS A GENERAR CADENA
         pilaE.clear();
-        String tip = "";
+        String tip = ""; nvar ++;
         while (!expre.isEmpty()) {
                 if (expre.get(0).equals("+") || expre.get(0).equals("-") || expre.get(0).equals("*") || expre.get(0).equals("/")) {
                     ST += pilaE.get(pilaE.size()-2) + " = " + pilaE.get(pilaE.size()-2) + expre.get(0) + pilaE.get(pilaE.size()-1) + ";\n";
@@ -97,17 +97,17 @@ public class Parser {
                     nvar--;
                 }else{
                     s = (Simbolo) tablaSimbolos.buscar(expre.get(0));
-                    if (s.tipo.equals("cart")) tip = "char";
+                    if (s.tipo.equals("caracter")) tip = "char";
                     if (s.tipo.equals("entero")) tip = "int";
                     if (s.tipo.equals("decimal")) tip = "float";
                     nvar++;
-                    if (!CFile.contains("var"+nvar)) {
+                    //if (!CFile.contains("var"+nvar)) {
                         if (expre.get(0).charAt(0) == '@') ST += tip + " var" + nvar + " = " + expre.get(0).substring(1, expre.get(0).length()) + ";\n";
                         else ST += tip + " var" + nvar + " = " + expre.get(0) + ";\n";
-                    }else{
-                        if (expre.get(0).charAt(0) == '@') ST += "var" + nvar + " = " + expre.get(0).substring(1,expre.get(0).length()) + ";\n";
-                        else ST += "var" + nvar + " = " + expre.get(0) + ";\n";
-                    }
+                    //}//else{
+                    //    if (expre.get(0).charAt(0) == '@') ST += " var" + nvar + " = " + expre.get(0).substring(1,expre.get(0).length()) + ";\n";
+                    //    else ST += "var" + nvar + " = " + expre.get(0) + ";\n";
+                    //}
                     pilaE.push("var" + nvar );
                     expre.remove(0);
                 }
@@ -195,7 +195,7 @@ public class Parser {
                         mban = false;
                     }
                     bangen = false;
-                    ST += "; \n";
+                    ST += ";\n";
                     break;
                 case "(":
                     if (bangen == false) ST += "(";

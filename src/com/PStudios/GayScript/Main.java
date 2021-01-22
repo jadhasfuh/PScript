@@ -7,7 +7,8 @@ public class Main {
     static String cadena1 = "programa idp inicio " +
                             "ent @c,@j;" +
                             "dec @t,@y,@res,@slo;" +
-                            "cart @cara = 's';"+
+                            "cart @l;"+
+                            "@l = 'a';"+
                             "hacer" +
                             "lec(@t);" +
                             "@c = @c-@c;" +
@@ -45,7 +46,7 @@ public class Main {
         tokens += lexer.toke;
         Semantic semantic = new Semantic(lexer.lexe, tablaSimbolos);
         Parser parser = new Parser(lexer.toke, lexer.lexe, tablaSimbolos, semantic);
-        if (parser.getMensajeError().equals("") && semantic.getMensajeError().equals("") && lexer.getMensajeError().equals("")) ;
+        //if (parser.getMensajeError().equals("") && semantic.getMensajeError().equals("") && lexer.getMensajeError().equals("")) ;
         System.out.println(parser.getCFile());
         int op = 0;
         while (op != 5){

@@ -12,7 +12,6 @@ public class Semantic {
 	String mensajeError = "", showLog = "Analisis Semantico\n";
 	int linea = 0, pos = 0;
 	boolean bproc;
-	Parser ban;
 
 	public Semantic(ArrayList<String> l, TablaSimbolos ts) {
 		lexe = l;
@@ -36,7 +35,7 @@ public class Semantic {
 			else
 				pusher();
 			loop();
-			if (pos-pt>1) finseg();
+			//if (pos-pt>1) finseg();
 			pilaS.clear();
 			showLog += pilaS + "\n";
 			// COMPARACIONES
@@ -80,9 +79,6 @@ public class Semantic {
 			mensajeError += "Error Semantico en linea " + linea + ": variable no declarada\n"; // SI EL SIMBOLO NO HA
 			// SIDO
 			bproc = false; // DECLARADO DETIENE Y MANEJA EL ERROR
-			ban.continuar = false;
-			ban.error = true;
-			ban.mensajeError += "Ocurrio un error de semantica, pulse la op. 4 para ver";
 		}
 		return s;
 	}
@@ -92,9 +88,6 @@ public class Semantic {
 			int CR[] = revisionT(t.tablaRS);
 			if (t.tablaRS[CR[0]][CR[1]].charAt(0) == '0') {
 				mensajeError += "Error Semantico en linea " + linea + ": tipos no compatibles\n";
-				ban.continuar = false;
-				ban.error = true;
-				ban.mensajeError += "Ocurrio un error de semantica, pulse la op. 4 para ver";
 			} else {
 				String temp = "";
 				while (pilaS.size() > 1) {
@@ -164,17 +157,11 @@ public class Semantic {
 					if (t.tablaRA[CR[0]][CR[1]].charAt(0) == '0') {
 						mensajeError += "Error Semantico en linea " + linea + ": operador invalido\n";
 						bproc = false;
-						ban.continuar = false;
-						ban.error = true;
-						ban.mensajeError += "Ocurrio un error de semantica, pulse la op. 4 para ver";
 					} else {
 						poper();
 						poper();
 						pilaS.push(t.tablaRA[CR[0]][CR[1]].substring(2, t.tablaRA[CR[0]][CR[1]].length()));
 						showLog += pilaS + "\n";
-						ban.continuar = false;
-						ban.error = true;
-						ban.mensajeError += "Ocurrio un error de semantica, pulse la op. 4 para ver";
 					}
 				}
 			}
@@ -204,9 +191,6 @@ public class Semantic {
 				if (t.tablaRA[CR[0]][CR[1]].charAt(0) == '0') {
 					mensajeError += "Error Semantico en linea " + linea + ": operador invalido\n";
 					bproc = false;
-					ban.continuar = false;
-					ban.error = true;
-					ban.mensajeError += "Ocurrio un error de semantica, pulse la op. 4 para ver";
 				} else {
 					poper();
 					poper();
