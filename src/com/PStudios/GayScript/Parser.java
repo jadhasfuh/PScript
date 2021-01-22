@@ -6,7 +6,7 @@ import java.util.Stack;
 public class Parser {
 
     boolean continuar = true, error = false, bangen = false;
-    int nlinea = 1,estado_actual = 0, pos = 0, num_toke = 0;
+    int nlinea = 1,estado_actual = 0, pos = 0, num_toke = 0, nvar = 0, nif = 1, nmientras = 1;
     Stack<String> pila = new Stack<String>();
     String mensajeError = "", showLog = "Analisis Sintactico\n";
     Semantic semantic;
@@ -39,7 +39,7 @@ public class Parser {
     public String sentencia(int p){
         boolean bproc = true;
         String asignacion = "", ST = "";
-        asignacion += lexe.get(p-1)+" = ";
+        asignacion += lexe.get(p-1).substring(1,lexe.get(p-1).length())+" = ";
         p++;
         Stack<String> pilaE = new Stack<>();
         Stack<String> expre = new Stack<>();
@@ -59,8 +59,6 @@ public class Parser {
                     break;
                 case "*":
                 case "/":
-                    pilaE.push(lexe.get(p));
-                    break;
                 case "(":
                     pilaE.push(lexe.get(p));
                     break;
@@ -86,7 +84,6 @@ public class Parser {
             p++;
         }
         //PROCEDEMOS A GENERAR CADENA
-        int nvar = 0;
         pilaE.clear();
         String tip = "";
         while (!expre.isEmpty()) {
@@ -104,25 +101,30 @@ public class Parser {
                     if (s.tipo.equals("entero")) tip = "int";
                     if (s.tipo.equals("decimal")) tip = "float";
                     nvar++;
-                    if (!ST.contains("var"+nvar))
-                        ST += tip + " var" + nvar + " = " + expre.get(0) + ";\n";
-                    else
-                        ST += "var" + nvar + " = " + expre.get(0) + ";\n";
+                    if (!CFile.contains("var"+nvar)) {
+                        if (expre.get(0).charAt(0) == '@') ST += tip + " var" + nvar + " = " + expre.get(0).substring(1, expre.get(0).length()) + ";\n";
+                        else ST += tip + " var" + nvar + " = " + expre.get(0) + ";\n";
+                    }else{
+                        if (expre.get(0).charAt(0) == '@') ST += "var" + nvar + " = " + expre.get(0).substring(1,expre.get(0).length()) + ";\n";
+                        else ST += "var" + nvar + " = " + expre.get(0) + ";\n";
+                    }
                     pilaE.push("var" + nvar );
                     expre.remove(0);
                 }
         }
-        asignacion += "var1";
+        asignacion += "var"+nvar;
         ST += asignacion;
         return ST;
     }
 
+    boolean lban = false, iban = false, sban = false, mban = false;
+
     public String reservado() {
         String ST = "";
-        boolean lban = false, iban = false, sban = false;
         if (lexe.get(pos).equals("lec")) lban = true;
         if (lexe.get(pos).equals("imp")) iban = true;
         if (lexe.get(pos).equals("si")) sban = true;
+        if (lexe.get(pos).equals("mientras")) mban = true;
         if (lexe.get(pos).charAt(0) == '@') {
             if (!lexe.get(pos+1).equals("=") && bangen == false) {
                 Simbolo s = tablaSimbolos.buscar(lexe.get(pos));
@@ -131,16 +133,19 @@ public class Parser {
                     if (s.tipo == "entero") td = "\"%d\"";
                     else if (s.tipo == "decimal") td = "\"%f\"";
                     else if (s.tipo == "caracter") td = "\"%c\"";
-                    ST += td + ",&" + s.nombre;
+                    if (s.nombre.charAt(0) == '@') ST += td + ",&" + s.nombre.substring(1,s.nombre.length());
+                    else ST += td + ",&" + s.nombre;
                     lban = false;
                 } else if (iban) {
                     if (s.tipo == "entero") td = "\"%d\\n\"";
                     else if (s.tipo == "decimal") td = "\"%f\\n\"";
                     else if (s.tipo == "caracter") td = "\"%c\\n\"";
-                    ST += td + "," + s.nombre;
+                    if (s.nombre.charAt(0) == '@') ST += td + "," + s.nombre.substring(1,s.nombre.length());
+                    else ST += td + ",&" + s.nombre;
                     iban = false;
                 } else {
-                    ST += s.nombre;
+                    if (s.nombre.charAt(0) == '@') ST += s.nombre.substring(1,s.nombre.length());
+                    else ST += s.nombre;
                 }
             }else bangen = true;
         }else if(Character.isDigit(lexe.get(pos).charAt(0))){
@@ -158,9 +163,9 @@ public class Parser {
                     break;
                 case "inicio":
                     if (sban) {
-                        ST += ") {\n";
+                        ST += ")) goto sino"+nif+";\n";
                         sban = false;
-                    }else {
+                    }else{
                         ST += " {\n";
                     }
                     break;
@@ -177,20 +182,26 @@ public class Parser {
                     ST += "return 0; \n}";
                     break;
                 case "endif":
-                    ST += "} \n";
+                    ST += "finif"+nif+":\n";
+                    nif ++;
                     break;
                 case ",":
                     ST += ", ";
                     break;
                 case ";":
+                    if (mban) {
+                        ST += ") goto mientras"+nmientras;
+                        nmientras++;
+                        mban = false;
+                    }
                     bangen = false;
                     ST += "; \n";
                     break;
                 case "(":
-                    ST += "(";
+                    if (bangen == false) ST += "(";
                     break;
                 case ")":
-                    ST += ")";
+                    if (bangen == false) ST += ")";
                     break;
                 case "<":
                     ST += "<";
@@ -205,13 +216,20 @@ public class Parser {
                     ST += ">=";
                     break;
                 case "si":
+                    ST += "if (!(";
+                    break;
+                case "hacer":
+                    ST += "mientras"+nmientras+":\n";
+                    break;
+                case "mientras":
                     ST += "if (";
+                    mban = true;
                     break;
                 case "imp":
                     ST += "printf";
                     break;
                 case "sino":
-                    ST += "} else { \n";
+                    ST += "goto finif"+nif+";\nsino"+nif+":\n";
                     break;
                 case "lec":
                     ST += "scanf";
@@ -239,7 +257,8 @@ public class Parser {
             if (table_funciones[estado_actual + 1][C].equals("30") ||
                     table_funciones[estado_actual + 1][C].equals("19") ||
                     table_funciones[estado_actual + 1][C].equals("18") ||
-                    table_funciones[estado_actual + 1][C].equals("15") ){
+                    table_funciones[estado_actual + 1][C].equals("15") ||
+                    table_funciones[estado_actual + 1][C].equals("16") ){
                 int e = Integer.parseInt(table_funciones[estado_actual + 1][C]);
                 if (e == 30) CFile += sentencia(pos);
                 try {
