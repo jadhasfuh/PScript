@@ -10,8 +10,13 @@ public class Main {
                             "cart @l;"+
                             "@l = 'a';"+
                             "hacer" +
+                                "hacer" +
+                                    "@c = @c-@c;" +
+                                    "si @t>@c \n inicio"+
+                                        "imp(@t);" +
+                                    "endif"+
+                                "mientras @c >= @c;" +
                             "lec(@t);" +
-                            "@c = @c-@c;" +
                             "mientras @c >= @c;" +
                             "@c=@y+@c-@j+@c;" +
                             "si @t>@j \n" +
@@ -46,7 +51,7 @@ public class Main {
         tokens += lexer.toke;
         Semantic semantic = new Semantic(lexer.lexe, tablaSimbolos);
         Parser parser = new Parser(lexer.toke, lexer.lexe, tablaSimbolos, semantic);
-        //if (parser.getMensajeError().equals("") && semantic.getMensajeError().equals("") && lexer.getMensajeError().equals("")) ;
+        if (parser.getMensajeError().isEmpty() && semantic.getMensajeError().isEmpty() && lexer.getMensajeError().isEmpty()) ;
         System.out.println(parser.getCFile());
         int op = 0;
         while (op != 5){

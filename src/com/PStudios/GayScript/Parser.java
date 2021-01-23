@@ -6,7 +6,8 @@ import java.util.Stack;
 public class Parser {
 
     boolean continuar = true, error = false, bangen = false, belse = false;
-    int nlinea = 1,estado_actual = 0, pos = 0, num_toke = 0, nvar = 0, nif = 0, nmientras = 0, anidado = 0, last = 0;
+    int nlinea = 1,estado_actual = 0, pos = 0, num_toke = 0, nvar = 0, nmax = 1;
+    Stack<Integer> nums = new Stack<Integer>();                                 //ETIQUETAS
     Stack<String> pila = new Stack<String>();
     String mensajeError = "", showLog = "Analisis Sintactico\n";
     Semantic semantic;
@@ -15,21 +16,14 @@ public class Parser {
     TablaSimbolos tablaSimbolos;
     String[][] table_funciones = t.tablaPSFX;
     String[][] table_produccin = t.lautil3;
-    String CFile;
+    String CFile,  STF = "", STD = "", STC = "";
 
     public Parser(ArrayList<String> t, ArrayList<String> l, TablaSimbolos ts, Semantic s){
         toke = t;
         lexe = l;
         tablaSimbolos = ts;
-        CFile = "/******************************************************************************\n" +
-                "\n" +
-                "               Código generado automaticamente.\n" +
-                "                    PSCript Compiler 2021 by\n" +
-                "                      Ceja Renteria Adrian   \n" +
-                "                     Ixta Zamudio Luis Jose   \n" +
-                "                  Mendiola Correa Cesar Paulino   \n" +
-                "\n" +
-                "*******************************************************************************/\n";
+        CFile = "";
+        STF = ""; STD = ""; STC = "";
         semantic = s;
         num_toke = t.size();
         toke.add("$");          //WE NEED TO ADD AN END OF STRING SYMBOL
@@ -42,6 +36,7 @@ public class Parser {
         asignacion += lexe.get(p-1).substring(1,lexe.get(p-1).length())+" = ";
         p++;
         Stack<String> pilaE = new Stack<>();
+        Stack<String> pilaVar = new Stack<>();
         Stack<String> expre = new Stack<>();
         Simbolo s = (Simbolo) tablaSimbolos.buscar(lexe.get(p));
         //ACOMODAMOS A POSFIJO
@@ -87,30 +82,42 @@ public class Parser {
         pilaE.clear();
         String tip = ""; nvar ++;
         while (!expre.isEmpty()) {
-                if (expre.get(0).equals("+") || expre.get(0).equals("-") || expre.get(0).equals("*") || expre.get(0).equals("/")) {
-                    ST += pilaE.get(pilaE.size()-2) + " = " + pilaE.get(pilaE.size()-2) + expre.get(0) + pilaE.get(pilaE.size()-1) + ";\n";
-                    String res = pilaE.get(pilaE.size()-2);
-                    pilaE.pop();
-                    pilaE.pop();
-                    expre.remove(0);
-                    pilaE.push(res);
-                    nvar--;
-                }else{
-                    s = (Simbolo) tablaSimbolos.buscar(expre.get(0));
-                    if (s.tipo.equals("caracter")) tip = "char";
-                    if (s.tipo.equals("entero")) tip = "int";
-                    if (s.tipo.equals("decimal")) tip = "float";
-                    nvar++;
-                    if (!CFile.contains("var"+nvar)) {
-                        if (expre.get(0).charAt(0) == '@') ST += tip + " var" + nvar + " = " + expre.get(0).substring(1, expre.get(0).length()) + ";\n";
-                        else ST += tip + " var" + nvar + " = " + expre.get(0) + ";\n";
-                    }else{
-                        if (expre.get(0).charAt(0) == '@') ST += " var" + nvar + " = " + expre.get(0).substring(1,expre.get(0).length()) + ";\n";
-                        else ST += "var" + nvar + " = " + expre.get(0) + ";\n";
+            if (expre.get(0).equals("+") || expre.get(0).equals("-") || expre.get(0).equals("*") || expre.get(0).equals("/")) {
+                ST += pilaE.get(pilaE.size()-2) + " = " + pilaE.get(pilaE.size()-2) + expre.get(0) + pilaE.get(pilaE.size()-1) + ";\n";
+                String res = pilaE.get(pilaE.size()-2);
+                pilaE.pop();
+                pilaE.pop();
+                expre.remove(0);
+                pilaE.push(res);
+                nvar--;
+            }else{
+                s = (Simbolo) tablaSimbolos.buscar(expre.get(0));
+                if (s.tipo.equals("caracter")) tip = "char";
+                if (s.tipo.equals("entero")) tip = "int";
+                if (s.tipo.equals("decimal")) tip = "float";
+                nvar++;
+                if (!CFile.contains("var"+nvar) && !pilaVar.contains("var"+nvar)) {
+                    if (expre.get(0).charAt(0) == '@') ST += " var" + nvar + " = " + expre.get(0).substring(1, expre.get(0).length()) + ";\n";
+                    else ST += " var" + nvar + " = " + expre.get(0) + ";\n";
+                    switch (tip) {
+                        case "float":
+                            STF+=tip + " var" + nvar + ";\n";
+                            break;
+                        case "int":
+                            STD+=tip + " var" + nvar + ";\n";
+                            break;
+                        case "char":
+                            STC+=tip + " var" + nvar + ";\n";
+                            break;
                     }
-                    pilaE.push("var" + nvar );
-                    expre.remove(0);
+                }else{
+                    if (expre.get(0).charAt(0) == '@') ST += " var" + nvar + " = " + expre.get(0).substring(1,expre.get(0).length()) + ";\n";
+                    else ST += "var" + nvar + " = " + expre.get(0) + ";\n";
                 }
+                pilaE.push("var" + nvar );
+                pilaVar.push("var" + nvar );
+                expre.remove(0);
+            }
         }
         asignacion += "var"+nvar;
         ST += asignacion;
@@ -150,27 +157,22 @@ public class Parser {
             }else bangen = true;
         }else if(Character.isDigit(lexe.get(pos).charAt(0))){
             Simbolo s = tablaSimbolos.buscar(lexe.get(pos));
-            if (s.tipo == "entero") ST += "\"%d\\n\","+s.valor;
-            else if (s.tipo == "decimal") ST += "\"%f\\n\","+s.valor;
-            else if (s.tipo == "caracter") ST += "\"%c\\n\","+s.valor;
+            if (estado_actual==37 || estado_actual==38 || estado_actual==39 || estado_actual==40 || estado_actual==41) {
+                ST+=s.valor;
+            }else {
+                if (s.tipo == "entero") ST += "\"%d\\n\","+s.valor;
+                else if (s.tipo == "decimal") ST += "\"%f\\n\","+s.valor;
+                else if (s.tipo == "caracter") ST += "\"%c\\n\","+s.valor;
+            }
         }else{
             switch (lexe.get(pos)) {
-                case "programa":
-                    ST += "\n#include <stdio.h>";
-                    break;
-                case "idp":
-                    ST += "\nint main ()";
-                    break;
                 case "inicio":
                     if (sban) {
-                        if (nif == 0 ) nif = last;
-                        anidado++;
-                        nif++;
-                        ST += ")) goto sino"+(nif+anidado)+";\n";
-                        if ((nif + anidado) > last) last = nif+anidado;
+                        if (nums.isEmpty()) nums.push(nmax);
+                        else nums.push(nums.peek()+1);
+                        if (nmax < nums.peek()) nmax = nums.peek();
+                        ST += ")) goto sino"+nums.peek()+";\n";
                         sban = false;
-                    }else{
-                        ST += " {\n";
                     }
                     break;
                 case "ent":
@@ -186,20 +188,18 @@ public class Parser {
                     ST += "return 0; \n}";
                     break;
                 case "endif":
-                    if (belse) ST += "goto finif"+(nif+anidado)+";\nsino"+(nif+anidado)+":\n";
+                    if (belse) ST += "goto finif"+nums.peek()+";\nsino"+nums.peek()+":\n";
                     belse = false;
-                    ST += "finif"+(nif+anidado)+":\n";
-                    anidado--;
-                    nif--;
+                    ST += "finif"+nums.peek()+":\n";
+                    nums.pop();
                     break;
                 case ",":
                     ST += ", ";
                     break;
                 case ";":
                     if (mban) {
-                        ST += ") goto mientras"+(nmientras+anidado);
-                        anidado--;
-                        nmientras--;
+                        ST += ") goto mientras"+nums.peek();
+                        nums.pop();
                         mban = false;
                     }
                     bangen = false;
@@ -228,11 +228,10 @@ public class Parser {
                     ST += "if (!(";
                     break;
                 case "hacer":
-                    if (nmientras == 0 ) nmientras = last;
-                    anidado++;
-                    nmientras ++;
-                    ST += "mientras"+(nmientras+anidado)+":\n";
-                    if ((nmientras + anidado) > last) last = nmientras+anidado;
+                    if (nums.isEmpty()) nums.push(1);
+                    else nums.push(nums.peek()+1);
+                    if (nmax < nums.peek()) nmax = nums.peek();
+                    ST += "mientras"+nums.peek()+":\n";
                     break;
                 case "mientras":
                     ST += "if (";
@@ -243,7 +242,7 @@ public class Parser {
                     break;
                 case "sino":
                     belse = false;
-                    ST += "goto finif"+(nif+anidado)+";\nsino"+(nif+anidado)+":\n";
+                    ST += "goto finif"+nums.peek()+";\nsino"+nums.peek()+":\n";
                     break;
                 case "lec":
                     ST += "scanf";
@@ -276,8 +275,8 @@ public class Parser {
                 int e = Integer.parseInt(table_funciones[estado_actual + 1][C]);
                 if (e == 30) CFile += sentencia(pos);
                 //try {
-                    semantic.ASemantico(pos, nlinea,e);
-               // }catch (Exception e1){System.out.println("errr");}
+                semantic.ASemantico(pos, nlinea,e);
+                // }catch (Exception e1){System.out.println("errr");}
             }
             CFile += reservado();
             desplaza(C);                                                                // DEACUERDO A LO ENCONTRADO
@@ -335,6 +334,11 @@ public class Parser {
 
     public String getMensajeError() { return mensajeError; }
     public String getLog() { return showLog; }
-    public String getCFile() { return CFile; }
+    public String getCFile() {
+        CFile.replace("#include <stdio.h>\nint main () {", "");
+        //System.out.println(cad1);
+        String tempst = CFile;
+        CFile = "#include <stdio.h>\nint main () {\n"+STC+STD+STF+tempst;
+        return CFile; }
 
 }
