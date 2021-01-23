@@ -6,7 +6,7 @@ import java.util.Stack;
 public class Parser {
 
     boolean continuar = true, error = false, bangen = false, belse = false;
-    int nlinea = 1,estado_actual = 0, pos = 0, num_toke = 0, nvar = 0, nmax = 1;
+    int nlinea = 1,estado_actual = 0, pos = 0, num_toke = 0, nvar = 0, nmax = 0;
     Stack<Integer> nums = new Stack<Integer>();                                 //ETIQUETAS
     Stack<String> pila = new Stack<String>();
     String mensajeError = "", showLog = "Analisis Sintactico\n";
@@ -168,7 +168,7 @@ public class Parser {
             switch (lexe.get(pos)) {
                 case "inicio":
                     if (sban) {
-                        if (nums.isEmpty()) nums.push(nmax);
+                        if (nums.isEmpty()) nums.push(nmax+1);
                         else nums.push(nums.peek()+1);
                         if (nmax < nums.peek()) nmax = nums.peek();
                         ST += ")) goto sino"+nums.peek()+";\n";
@@ -228,7 +228,7 @@ public class Parser {
                     ST += "if (!(";
                     break;
                 case "hacer":
-                    if (nums.isEmpty()) nums.push(1);
+                    if (nums.isEmpty()) nums.push(nmax+1);
                     else nums.push(nums.peek()+1);
                     if (nmax < nums.peek()) nmax = nums.peek();
                     ST += "mientras"+nums.peek()+":\n";
