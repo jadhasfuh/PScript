@@ -138,40 +138,69 @@ public class Parser {
             if (!lexe.get(pos+1).equals("=") && bangen == false) {
                 Simbolo s = tablaSimbolos.buscar(lexe.get(pos));
                 String td = "%";
+                //PAA LOS IGUALES
                 if (lban) {
-                    if (s.tipo == "entero") td = "\"%d\"";
-                    else if (s.tipo == "decimal") td = "\"%f\"";
-                    else if (s.tipo == "caracter") td = "\"%c\"";
-                    if (s.nombre.charAt(0) == '@') ST += td + ",&" + s.nombre.substring(1,s.nombre.length());
-                    else ST += td + ",&" + s.nombre;
-                    lban = false;
-                } else if (iban) {
-                    if (s.tipo == "entero") td = "\"%d\\n\"";
-                    else if (s.tipo == "decimal") td = "\"%f\\n\"";
-                    else if (s.tipo == "caracter") td = "\"%c\\n\"";
-                    if (s.nombre.charAt(0) == '@') ST += td + "," + s.nombre.substring(1,s.nombre.length());
-                    else ST += td + ",&" + s.nombre;
-                    iban = false;
-                } else {
+                    if (estado_actual==15 || estado_actual==16 || estado_actual==24 || estado_actual==25  || estado_actual==26 || estado_actual==27 || estado_actual==28 ) {
+                        if (s.nombre.charAt(0) == '@') ST += s.nombre.substring(1,s.nombre.length());
+                        else ST += s.nombre;
+                        lban=false;
+                    }else {
+                        if (s.tipo == "entero") td = "\"%d\"";
+                        else if (s.tipo == "decimal") td = "\"%f\"";
+                        else if (s.tipo == "caracter") td = "\"%c\"";
+                        if (s.nombre.charAt(0) == '@') ST += td + ",&" + s.nombre.substring(1,s.nombre.length());
+                        else ST += td + ",&" + s.nombre;
+                        lban = false;
+                    } } else if (iban) {
+                    if (estado_actual==15 || estado_actual==16 || estado_actual==24 || estado_actual==25  || estado_actual==26 || estado_actual==27 || estado_actual==28    ) {
+                        if (s.nombre.charAt(0) == '@') ST += s.nombre.substring(1,s.nombre.length());
+                        else ST += s.nombre;
+                        iban = false;
+                    }else {
+                        if (s.tipo == "entero") td = "\"%d\\n\"";
+                        else if (s.tipo == "decimal") td = "\"%f\\n\"";
+                        else if (s.tipo == "caracter") td = "\"%c\\n\"";
+                        if (s.nombre.charAt(0) == '@') ST += td + "," + s.nombre.substring(1,s.nombre.length());
+                        else ST += td + ",&" + s.nombre;
+                        iban = false;
+                    }} else {
                     if (s.nombre.charAt(0) == '@') ST += s.nombre.substring(1,s.nombre.length());
                     else ST += s.nombre;
                 }
             }else bangen = true;
         }else if(Character.isDigit(lexe.get(pos).charAt(0))){
             Simbolo s = tablaSimbolos.buscar(lexe.get(pos));
-            if (estado_actual==37 || estado_actual==38 || estado_actual==39 || estado_actual==40 || estado_actual==41) {
+            if (estado_actual==37 || estado_actual==38 || estado_actual==39 || estado_actual==40 || estado_actual==41 || estado_actual==42) {
                 ST+=s.valor;
             }else {
-                if (s.tipo == "entero") ST += "\"%d\\n\","+s.valor;
-                else if (s.tipo == "decimal") ST += "\"%f\\n\","+s.valor;
-                else if (s.tipo == "caracter") ST += "\"%c\\n\","+s.valor;
+                if (estado_actual==66 || estado_actual==67 ||estado_actual==68 ||estado_actual==69 || estado_actual==30 || estado_actual==19 ||estado_actual==18 ||estado_actual==15 ||estado_actual==16 )
+                    ST+="";
+                else {
+                    if (s.tipo == "entero") ST += "\"%d\\n\","+s.valor;
+                    else if (s.tipo == "decimal") ST += "\"%f\\n\","+s.valor;
+                        //ESTE AGARRA NUMERES '0'
+                    else if (s.tipo == "caracter") ST += "\"%c\\n\","+s.valor;
+                }
             }
-        }else{
+        }else if ((char) lexe.get(pos).charAt(0) == '\''){
+            //caracter
+            Simbolo s = tablaSimbolos.buscar(lexe.get(pos));
+            if (Character.isAlphabetic(lexe.get(pos).charAt(1))) {
+                if (estado_actual==31 || estado_actual==32 )
+                    ST += "\"%c\\n\","+s.valor;
+                    //ESTO ES POR SI SI TIENE UNA ASINACION NO SE REPITA
+                else if (estado_actual==66 || estado_actual==67 ||estado_actual==68 ||estado_actual==69 || estado_actual==30 || estado_actual==19 ||estado_actual==18 ||estado_actual==15 ||estado_actual==16 )
+                    ST+="";
+                else
+                    ST+=s.valor;
+
+            }
+        }else {
             switch (lexe.get(pos)) {
                 case "inicio":
                     if (sban) {
                         if (nums.isEmpty()) nums.push(nmax+1);
-                        else nums.push(nums.peek()+1);
+                        else nums.push(nmax+1);
                         if (nmax < nums.peek()) nmax = nums.peek();
                         ST += ")) goto sino"+nums.peek()+";\n";
                         sban = false;
@@ -225,13 +254,19 @@ public class Parser {
                 case ">=":
                     ST += ">=";
                     break;
+                case "!=":
+                    ST += "!=";
+                    break;
+                case "==":
+                    ST += "==";
+                    break;
                 case "si":
                     belse = true;
                     ST += "if (!(";
                     break;
                 case "hacer":
                     if (nums.isEmpty()) nums.push(nmax+1);
-                    else nums.push(nums.peek()+1);
+                    else nums.push(nmax+1);
                     if (nmax < nums.peek()) nmax = nums.peek();
                     ST += "mientras"+nums.peek()+":\n";
                     break;
@@ -255,7 +290,6 @@ public class Parser {
         }
         return ST;
     }
-
 
     public void next(int C) {
         for (int i = 0; i < table_funciones[0].length; i++) {                                   // COL REN

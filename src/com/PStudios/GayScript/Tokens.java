@@ -22,7 +22,7 @@ public enum Tokens {
     programa("programa"),
     mayi(">="),
     mini("<="),
-    comp("=="),
+    comp("={2}"),
     compd("!="),
     op_asig("[=]"),
     may("[>]"),

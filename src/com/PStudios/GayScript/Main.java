@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class Main {
 
-    /*static String cadena1 = "programa idp inicio " +
+    static String cadena1 = "programa idp inicio " +
                              "ent @c,@j;" +
                              "imp ('D');"+
                              "lec(@c);"+
@@ -23,7 +23,7 @@ public class Main {
                              "mientras @j<@c;"+
                              "imp ('f');"+
                             "fin";
-    */
+
     //TRONADOR D:
 	/*static String cadena1 = "programa idp inicio " +
 				"ent @c,@j;" +
@@ -43,7 +43,7 @@ public class Main {
 				"imp ('f');"+
 			"fin";*/
 
-    static String cadena1 = "programa idp inicio " +
+    /*static String cadena1 = "programa idp inicio " +
             "ent @c,@j;" +
             "cart @A2;" +
             "dec @er;" +
@@ -51,6 +51,9 @@ public class Main {
             "lec(@c);" +
             "si @c > 21 \n inicio" +
                 "hacer"+
+                    "si @c == 15 \n inicio" +
+                        "imp (15);" +
+                    "endif" +
                     "imp ('S');" +
                     "imp ('A');" +
                     "imp ('T');" +
@@ -59,6 +62,9 @@ public class Main {
                 "@j=1;" +
             "sino" +
                 "hacer"+
+                    "si @c == 15 \n inicio" +
+                        "imp (15);" +
+                    "endif" +
                     "imp ('I');" +
                     "imp ('N');" +
                     "imp ('E');" +
@@ -69,7 +75,7 @@ public class Main {
             "@j=(@j+1-3)*2.3;" +
             "imp (@j);" +
             "imp ('F');" +
-            "fin";
+            "fin";*/
 
   /*  static String cadena1 = "programa idp inicio " +
             "ent @c,@j;" +
@@ -243,6 +249,7 @@ public class Main {
                     if (MensajeError.isEmpty()) {
                         try {
                             File file = new File("cout.c");
+                            file.delete();
                             String conf = guardar(file, parser.getCFile());
                             System.out.println("Archivo creado: " + file.getName());
                         } catch (Exception e) {
