@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class Main {
 
     //GENERADOR DE SERIE DE MULTIPLICAR DEL 1 AL 10
-/*    static String cadena1 = "programa idp inicio " +
+    static String cadena1 = "programa idp inicio " +
                                 "ent @t;\n" +
                                 "ent @res;\n" +
                                 "ent @i;\n" +
@@ -19,7 +19,7 @@ public class Main {
                                     "@i = @i + 1;\n"+
                                 "mientras @i < 11;\n"+
                             "fin";
-*/
+
     //CILOS ANIDADOS
 /*    static String cadena1 = "programa idp inicio " +
             "ent @c,@j;" +
