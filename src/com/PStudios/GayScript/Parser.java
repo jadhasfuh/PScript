@@ -6,7 +6,7 @@ import java.util.Stack;
 public class Parser {
 
     boolean continuar = true, error = false, bangen = false, belse = false;
-    int nlinea = 1,estado_actual = 0, pos = 0, num_toke = 0, nvar = 0, nmax = 0;
+    int nlinea = 1, estado_actual = 0, pos = 0, num_toke = 0, nvar = 0, nmax = 0, maximus = 0;
     Stack<Integer> nums = new Stack<Integer>();                                 //ETIQUETAS
     Stack<String> pila = new Stack<String>();
     String mensajeError = "", showLog = "Analisis Sintactico\n";
@@ -16,14 +16,16 @@ public class Parser {
     TablaSimbolos tablaSimbolos;
     String[][] table_funciones = t.tablaPSFX;
     String[][] table_produccin = t.lautil3;
-    String CFile,  STF = "", STD = "", STC = "";
+    String CFile, STF = "", STD = "", STC = "";
 
-    public Parser(ArrayList<String> t, ArrayList<String> l, TablaSimbolos ts, Semantic s){
+    public Parser(ArrayList<String> t, ArrayList<String> l, TablaSimbolos ts, Semantic s) {
         toke = t;
         lexe = l;
         tablaSimbolos = ts;
         CFile = "";
-        STF = ""; STD = ""; STC = "";
+        STF = "";
+        STD = "";
+        STC = "";
         semantic = s;
         num_toke = t.size();
         toke.add("$");          //WE NEED TO ADD AN END OF STRING SYMBOL
@@ -254,9 +256,11 @@ public class Parser {
         return ST;
     }
 
+
     public void next(int C) {
         for (int i = 0; i < table_funciones[0].length; i++) {                                   // COL REN
-            if (table_funciones[0][i].equals(toke.get(0))) C = i;                               // ENCUENTRA LA POSICION DEL TOKEN
+            if (table_funciones[0][i].equals(toke.get(0)))
+                C = i;                               // ENCUENTRA LA POSICION DEL TOKEN
         }
         if (table_funciones[estado_actual + 1][C].charAt(0) == ' ') {
             continuar = false;
@@ -264,36 +268,39 @@ public class Parser {
         } else if (table_funciones[estado_actual + 1][C].charAt(0) == 'P') {
             showLog += "Reduce " + table_funciones[estado_actual + 1][C] + "\n";
             reduce(C);
-        }else{
+        } else {
             showLog += "Desplaza " + toke.get(0) + " con estado I" + estado_actual + "\n";
             //ASIGNACIONES
             if (table_funciones[estado_actual + 1][C].equals("30") ||
                     table_funciones[estado_actual + 1][C].equals("19") ||
                     table_funciones[estado_actual + 1][C].equals("18") ||
                     table_funciones[estado_actual + 1][C].equals("15") ||
-                    table_funciones[estado_actual + 1][C].equals("16") ){
+                    table_funciones[estado_actual + 1][C].equals("16")) {
                 int e = Integer.parseInt(table_funciones[estado_actual + 1][C]);
                 if (e == 30) CFile += sentencia(pos);
-                //try {
-                semantic.ASemantico(pos, nlinea,e);
-                // }catch (Exception e1){System.out.println("errr");}
+                try {
+                    semantic.ASemantico(pos, nlinea, e);
+                } catch (Exception e1) {
+                    mensajeError += "Error semantico en la linea: " + nlinea;
+                }
             }
             CFile += reservado();
             desplaza(C);                                                                // DEACUERDO A LO ENCONTRADO
         }
     }
 
-    public void proceso(){
+    public void proceso() {
         int C = 0;                                                                       //COLUMNA (TOKEN)
         pila.push("I0");                                                            //INSERTA EL ESTADO INICIAL
         while (continuar) {                                                              //MIENTRAS HAYA TOKENS
-            if(toke.get(0).equals("linea")){
+            if (toke.get(0).equals("linea")) {
                 toke.remove(0);
                 nlinea++;
             }
-            next(C);
+            if (semantic.getMensajeError().isEmpty()) next(C);
+            else continuar = false;
         }
-        if (error) mensajeError += "Error de sintaxis en la linea: "+nlinea;
+        if (error) mensajeError += "Error de sintaxis en la linea: " + nlinea;
         else showLog += "Sintaxis correcta\n";
     }
 
@@ -313,7 +320,8 @@ public class Parser {
         int prodindex = produccion.length - 1;                                                  // CUANTOS ELEMENTOS TIENE EL ARREGLO RESULTANTE
 
         while (prodindex >= 0) {                                                                // COMPARA DEL FINAL AL INICIO
-            if (pila.peek().charAt(0) == 'I') estado_actual = Integer.parseInt(pila.peek().substring(1, 2)); // OBTINE ESTADOS
+            if (pila.peek().charAt(0) == 'I')
+                estado_actual = Integer.parseInt(pila.peek().substring(1, 2)); // OBTINE ESTADOS
             if (produccion[prodindex].equals(pila.peek())) {                                    // SI COINCIDE CONTINUA COMPARANDO CON EL SIGUIENTE
                 pila.pop();
                 prodindex--;                                                                    // Y CONTINUANDO IGUAL DEL NUEVO FINAL AL INICIO
@@ -324,7 +332,8 @@ public class Parser {
             pila.push(table_produccin[NP][1]);                                                  // DA PUSH A LO QUE GENERA LA REDUCCION
             int P = 0;
             for (int i = 0; i < table_funciones[0].length; i++) {                               // COL REN
-                if (table_funciones[0][i].equals(pila.peek()))   P = i;                        // ENCUENTRA LA POSICION DEL TOKEN
+                if (table_funciones[0][i].equals(pila.peek()))
+                    P = i;                        // ENCUENTRA LA POSICION DEL TOKEN
             }
             estado_actual = Integer.parseInt(table_funciones[estado_actual + 1][P]);
             pila.push("I" + estado_actual); // INSERTA EL ESTADO
@@ -332,13 +341,20 @@ public class Parser {
         }
     }
 
-    public String getMensajeError() { return mensajeError; }
-    public String getLog() { return showLog; }
+    public String getMensajeError() {
+        return mensajeError;
+    }
+
+    public String getLog() {
+        return showLog;
+    }
+
     public String getCFile() {
         CFile.replace("#include <stdio.h>\nint main () {", "");
         //System.out.println(cad1);
         String tempst = CFile;
-        CFile = "#include <stdio.h>\nint main () {\n"+STC+STD+STF+tempst;
-        return CFile; }
+        CFile = "#include <stdio.h>\nint main () {\n" + STC + STD + STF + tempst;
+        return CFile;
+    }
 
 }
