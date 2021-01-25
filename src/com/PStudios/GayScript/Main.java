@@ -6,44 +6,22 @@ import java.util.Scanner;
 
 public class Main {
 
-    static String cadena1 = "programa idp inicio " +
-                             "ent @c,@j;" +
-                             "imp ('D');"+
-                             "lec(@c);"+
-                             "si @c < 18 \n inicio"+
-                             "imp ('A');"+
-                             "sino"+
-                             "imp ('B');"+
-                             "endif"+
-                             "imp ('S');"+
-                             "@j=1;"+
-                             "hacer"+
-                             "imp(@j);"+
-                             "@j=(@j+1)*2.3;"+
-                             "mientras @j<@c;"+
-                             "imp ('f');"+
+    //GENERADOR DE SERIE DE MULTIPLICAR DEL 1 AL 10
+/*    static String cadena1 = "programa idp inicio " +
+                                "ent @t;\n" +
+                                "ent @res;\n" +
+                                "ent @i;\n" +
+                                "@i = 1;\n" +
+                                "lec(@t);\n"+
+                                "hacer\n"+
+                                    "@res = @t*@i;\n"+
+                                    "imp (@res);\n"+
+                                    "@i = @i + 1;\n"+
+                                "mientras @i < 11;\n"+
                             "fin";
-
-    //TRONADOR D:
-	/*static String cadena1 = "programa idp inicio " +
-				"ent @c,@j;" +
-				"imp ('D');"+
-				"lec(@c);"+
-				"si @c < 18 \n inicio"+
-				"imp ('A');"+
-				"sino"+
-				"imp ('B');"+
-				"endif"+
-				"imp ('S');"+
-				"@j=1;"+
-				"hacer"+
-				"imp(@j);"+
-				"@j=(@j+)*2.3;"+
-				"mientras @j<@c;"+
-				"imp ('f');"+
-			"fin";*/
-
-    /*static String cadena1 = "programa idp inicio " +
+*/
+    //CILOS ANIDADOS
+/*    static String cadena1 = "programa idp inicio " +
             "ent @c,@j;" +
             "cart @A2;" +
             "dec @er;" +
@@ -58,7 +36,7 @@ public class Main {
                     "imp ('A');" +
                     "imp ('T');" +
                     "@c = @c - 1;"+
-                "mientras @c > 0;"+
+                "mientras @c > 20;"+
                 "@j=1;" +
             "sino" +
                 "hacer"+
@@ -69,14 +47,14 @@ public class Main {
                     "imp ('N');" +
                     "imp ('E');" +
                     "@c = @c - 1;"+
-                "mientras @c > 0;"+
+                "mientras @c > 20;"+
                 "@j=0;" +
             "endif" +
             "@j=(@j+1-3)*2.3;" +
             "imp (@j);" +
             "imp ('F');" +
-            "fin";*/
-
+            "fin";
+*/
   /*  static String cadena1 = "programa idp inicio " +
             "ent @c,@j;" +
             "cart @A2;" +
@@ -216,7 +194,7 @@ public class Main {
         Lexer lexer = new Lexer(cad, tablaSimbolos);
         tokens += lexer.toke;
         Semantic semantic = new Semantic(lexer.lexe, tablaSimbolos);
-        Parser parser = new Parser(lexer.toke, lexer.lexe, tablaSimbolos, semantic);
+        Parser parser = new Parser(lexer.toke, lexer.lexe, tablaSimbolos, semantic, lexer.getMensajeError());
 
         //IMPRESION DE ERRORES O GENERACION DE CODIGO C
         MensajeError = (parser.getMensajeError() + "\n" + semantic.getMensajeError() + "\n" + lexer.getMensajeError()).trim();

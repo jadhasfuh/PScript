@@ -31,7 +31,7 @@ public class EditorController {
         lexer = new Lexer(codeArea.getText(), tablaSimbolos);
         System.out.println(lexer.lexe);
         System.out.println(lexer.toke);
-        parser = new Parser(lexer.toke, lexer.lexe, tablaSimbolos, semantic);
+        parser = new Parser(lexer.toke, lexer.lexe, tablaSimbolos, semantic, lexer.getMensajeError());
         System.out.println(lexer.lexe);
         System.out.println(lexer.toke);
         semantic = new Semantic(lexer.lexe, tablaSimbolos);

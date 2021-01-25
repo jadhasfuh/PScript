@@ -16,11 +16,12 @@ public class Parser {
     TablaSimbolos tablaSimbolos;
     String[][] table_funciones = t.tablaPSFX;
     String[][] table_produccin = t.lautil3;
-    String CFile, STF = "", STD = "", STC = "";
+    String CFile, STF = "", STD = "", STC = "", eLex;
 
-    public Parser(ArrayList<String> t, ArrayList<String> l, TablaSimbolos ts, Semantic s) {
+    public Parser(ArrayList<String> t, ArrayList<String> l, TablaSimbolos ts, Semantic s, String mL) {
         toke = t;
         lexe = l;
+        eLex = mL;
         tablaSimbolos = ts;
         CFile = "";
         STF = "";
@@ -331,6 +332,7 @@ public class Parser {
                 toke.remove(0);
                 nlinea++;
             }
+            if (!eLex.isEmpty()) continuar = false;
             if (semantic.getMensajeError().isEmpty()) next(C);
             else continuar = false;
         }
