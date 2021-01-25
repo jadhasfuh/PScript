@@ -139,6 +139,9 @@ public class Semantic {
                     case ";":
                         bproc = false;
                         break;
+                    default:
+                        bproc = false;
+                        break;
                 }
             }
         }
